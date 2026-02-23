@@ -94,30 +94,34 @@ void AnalogButton_Init(void) {
 #endif
 
 #if defined(ESTOP_ENABLE)
+extern volatile uint32_t main_loop_counter;
+
 volatile uint8_t estop_flag        = 0U;
 volatile uint8_t estop_latch_flag  = 0U;
 static uint8_t          estop_state       = 0U;
 static uint8_t          estop_sample_prev = 0U;
-static uint32_t         estop_change_tick = 0U;
+static uint32_t         estop_change_loop = 0U;
+
+#define ESTOP_DEBOUNCE_LOOPS ((uint32_t)(((ESTOP_DEBOUNCE_MS) + (DELAY_IN_MAIN_LOOP) - 1U) / (DELAY_IN_MAIN_LOOP)))
 
 void estop_init(void) {
   estop_flag        = 0U;
   estop_latch_flag  = 0U;
-  estop_change_tick = HAL_GetTick();
+  estop_change_loop = main_loop_counter;
   estop_sample_prev = (HAL_GPIO_ReadPin(ESTOP_PORT, ESTOP_PIN) == ESTOP_ACTIVE_STATE);
   estop_state       = estop_sample_prev;
 }
 
 void estop_update(void) {
-  const uint32_t now   = HAL_GetTick();
+  const uint32_t now   = main_loop_counter;
   const uint8_t sample = (HAL_GPIO_ReadPin(ESTOP_PORT, ESTOP_PIN) == ESTOP_ACTIVE_STATE);
 
   if (sample != estop_sample_prev) {
     estop_sample_prev = sample;
-    estop_change_tick = now;
+    estop_change_loop = now;
   }
 
-  if ((now - estop_change_tick) >= ESTOP_DEBOUNCE_MS && estop_state != estop_sample_prev) {
+  if ((now - estop_change_loop) >= ESTOP_DEBOUNCE_LOOPS && estop_state != estop_sample_prev) {
     estop_state = estop_sample_prev;
     if (estop_state) {
 #if defined(ESTOP_REQUIRE_HOLD)

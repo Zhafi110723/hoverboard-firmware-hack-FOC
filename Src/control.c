@@ -491,7 +491,7 @@ void PWM_Init(void) {
 
   TIM_IC_InitTypeDef ic_cfg = {0};
   ic_cfg.ICPrescaler = TIM_ICPSC_DIV1;
-  ic_cfg.ICFilter = 15;
+  ic_cfg.ICFilter = 5;
 
   ic_cfg.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
   ic_cfg.ICSelection = TIM_ICSELECTION_DIRECTTI;

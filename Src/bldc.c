@@ -55,7 +55,7 @@ static int16_t pwm_margin;              /* This margin allows to have a window i
 
 extern uint8_t ctrlModReq;
 static int16_t curDC_max = (I_DC_MAX * A2BIT_CONV);
-int16_t I_BusR=0; // Right driver total current in x10 resolution
+int16_t I_BusR=0; 
 
 int16_t curL_phaA = 0, curL_phaB = 0, curL_DC = 0;
 int16_t curR_phaB = 0, curR_phaC = 0, curR_DC = 0;
@@ -86,17 +86,29 @@ void BLDC_SetPwmResolution(uint16_t periodCounts) {
 }
 
 static uint16_t offsetcount = 0;
-static int16_t offsetrlA    = 2000;
-static int16_t offsetrlB    = 2000;
-static int16_t offsetrrB    = 2000;
-static int16_t offsetrrC    = 2000;
-static int16_t offsetdcl    = 2000;
-static int16_t offsetdcr    = 2000;
-
+static int16_t offsetrlA    = CURRENT_SENSE_OFFSET_INIT;
+static int16_t offsetrlB    = CURRENT_SENSE_OFFSET_INIT;
+static int16_t offsetrrB    = CURRENT_SENSE_OFFSET_INIT;
+static int16_t offsetrrC    = CURRENT_SENSE_OFFSET_INIT;
+static int16_t offsetdcl    = CURRENT_SENSE_OFFSET_INIT;
+static int16_t offsetdcr    = CURRENT_SENSE_OFFSET_INIT;
+#if defined(CURRENT_SENSE_OFFSET_CAL_MODE_AVG)
+static int32_t offsetSumRlA = 0;
+static int32_t offsetSumRlB = 0;
+static int32_t offsetSumRrB = 0;
+static int32_t offsetSumRrC = 0;
+static int32_t offsetSumDcl = 0;
+static int32_t offsetSumDcr = 0;
+#endif
+int16_t unf_VBUS;
 extern int16_t batVoltageCalib;
-int16_t        batVoltage       = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE;
-static int32_t batVoltageFixdt  = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 16;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
+
 int32_t emulated_mech_angle_deg = 0; // For encoder simulation during alignment
+
+uint8_t BLDC_CurrentOffsetCalDone(void) {
+  return (offsetcount >= CURRENT_SENSE_OFFSET_CAL_SAMPLES) ? 1U : 0U; 
+}
+
 // =================================
 // DMA interrupt frequency =~ 16 kHz
 // =================================
@@ -106,21 +118,53 @@ void DMA1_Channel1_IRQHandler(void) {
   // HAL_GPIO_WritePin(LED_PORT, LED_PIN, 1);
   // HAL_GPIO_TogglePin(LED_PORT, LED_PIN);
 
-  if(offsetcount < 2000) {  // calibrate ADC offsets
-    offsetcount++;
-  offsetrlA = (adc_buffer.adc12.value.rlA + offsetrlA) / 2;
-  offsetrlB = (adc_buffer.adc12.value.rlB + offsetrlB) / 2;
-  offsetrrB = (adc_buffer.adc12.value.rrB + offsetrrB) / 2;
-  offsetrrC = (adc_buffer.adc12.value.rrC + offsetrrC) / 2;
-  offsetdcl = (adc_buffer.adc12.value.dcl + offsetdcl) / 2;
-  offsetdcr = (adc_buffer.adc12.value.dcr + offsetdcr) / 2;
-    return;
-  }
+  if(offsetcount < CURRENT_SENSE_OFFSET_CAL_SAMPLES) {  // calibrate ADC offsets
+    enable = 0;
+  #if defined(CURRENT_SENSE_OFFSET_CAL_MODE_AVG)
+    if (offsetcount == 0U) {
+      offsetSumRlA = 0;
+      offsetSumRlB = 0;
+      offsetSumRrB = 0;
+      offsetSumRrC = 0;
+      offsetSumDcl = 0;
+      offsetSumDcr = 0;
+    }
 
-  if (buzzerTimer % 1000 == 0) {  // Filter battery voltage at a slower sampling rate
-  filtLowPass32(adc_buffer.adc3.value.batt1, BAT_FILT_COEF, &batVoltageFixdt);
-    batVoltage = (int16_t)(batVoltageFixdt >> 16);  // convert fixed-point to integer
-  }
+    offsetSumRlA += (int32_t)adc_buffer.adc12.value.rlA;
+    offsetSumRlB += (int32_t)adc_buffer.adc12.value.rlB;
+    offsetSumRrB += (int32_t)adc_buffer.adc12.value.rrB;
+    offsetSumRrC += (int32_t)adc_buffer.adc12.value.rrC;
+    offsetSumDcl += (int32_t)adc_buffer.adc12.value.dcl;
+    offsetSumDcr += (int32_t)adc_buffer.adc12.value.dcr;
+
+    offsetcount++;
+    if (offsetcount == CURRENT_SENSE_OFFSET_CAL_SAMPLES) {
+      offsetrlA = (int16_t)(offsetSumRlA / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
+      offsetrlB = (int16_t)(offsetSumRlB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
+      offsetrrB = (int16_t)(offsetSumRrB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
+      offsetrrC = (int16_t)(offsetSumRrC / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
+      offsetdcl = (int16_t)(offsetSumDcl / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
+      offsetdcr = (int16_t)(offsetSumDcr / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
+    }
+  #else
+    offsetcount++;
+    offsetrlA = (adc_buffer.adc12.value.rlA + offsetrlA) / 2;
+    offsetrlB = (adc_buffer.adc12.value.rlB + offsetrlB) / 2;
+    offsetrrB = (adc_buffer.adc12.value.rrB + offsetrrB) / 2;
+    offsetrrC = (adc_buffer.adc12.value.rrC + offsetrrC) / 2;
+    offsetdcl = (adc_buffer.adc12.value.dcl + offsetdcl) / 2;
+    offsetdcr = (adc_buffer.adc12.value.dcr + offsetdcr) / 2;
+  #endif
+    return;
+  }else if(offsetcount == CURRENT_SENSE_OFFSET_CAL_SAMPLES) {
+    enable = 1;
+    offsetcount++; // just to make sure we do not enter the calibration branch again
+}
+
+  unf_VBUS = adc_buffer.adc3.value.batt1 * BAT_CALIB_SCALAR;
+ // if (buzzerTimer % 100 == 0) {  // Filter battery voltage at a slower sampling rate
+ // 
+ // }
 
   // Get Left motor currents
   curL_phaA = (int16_t)(offsetrlA - adc_buffer.adc12.value.rlA);
@@ -270,8 +314,8 @@ void DMA1_Channel1_IRQHandler(void) {
     #else
     int16_t regenCur = curR_DC - MAX_REGEN_CURRENT;
     const int16_t brkOnThresh = BRKRESACT_SENS;
-    const int16_t brkOffThresh = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;
-    const int16_t vBusCalib = batVoltageCalib;
+    //const int16_t brkOffThresh = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;
+    const int16_t vBusCalib = unf_VBUS;
   #if defined(BRK_VOLTAGE_RAMP_ENABLED)
     const uint8_t overvoltageRequest = (vBusCalib > BRK_OVERVOLTAGE_RAMP_START);
     const int16_t rampSpan = (BRK_OVERVOLTAGE_RAMP_END > BRK_OVERVOLTAGE_RAMP_START) ?
@@ -290,7 +334,7 @@ void DMA1_Channel1_IRQHandler(void) {
         brkResActiveL = 1;
       }
     } else {
-      if ((regenCur <= brkOffThresh) && !overvoltageRequest) {
+      if ((regenCur <= MAX_REGEN_CURRENT) && !overvoltageRequest) {
         brkResActiveL = 0;
       }
     }
@@ -384,7 +428,7 @@ void DMA1_Channel1_IRQHandler(void) {
   #ifdef EXTBRK_EN
   int16_t busRegenCur = (curR_DC + curL_DC) - MAX_REGEN_CURRENT; // Total bus regen current in x10 resolution
   const int16_t brkOnThreshExt = BRKRESACT_SENS;
-  const int16_t brkOffThreshExt = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;
+  //const int16_t brkOffThreshExt = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;
   const int16_t vBusCalibExt = batVoltageCalib;
 #if defined(BRK_VOLTAGE_RAMP_ENABLED)
   const uint8_t overvoltageRequestExt = (vBusCalibExt > BRK_OVERVOLTAGE_RAMP_START);
@@ -404,7 +448,7 @@ void DMA1_Channel1_IRQHandler(void) {
       brkResActiveExt = 1;
     }
   } else {
-    if ((busRegenCur <= brkOffThreshExt) && !overvoltageRequestExt) {
+    if ((busRegenCur <= MAX_REGEN_CURRENT) && !overvoltageRequestExt) {
       brkResActiveExt = 0;
     }
   }

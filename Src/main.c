@@ -99,7 +99,9 @@ extern volatile int pwmr;               // global variable for pwm right. -1000 
 
 extern uint8_t enable;                  // global variable for motor enable
 
-extern int16_t batVoltage;              // global variable for battery voltage
+extern int16_t unf_VBUS;                //ADC raw
+int16_t batVoltage              = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE;
+static int32_t batVoltageFixdt  = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 16;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
 int32_t board_temp_adcFixdt = 0;  
 int16_t board_temp_adcFilt = 0;
 
@@ -303,7 +305,7 @@ int main(void) {
         if (!encoder_x.ini){
           // Try to re-initialize the encoder if not yet initialized
           Encoder_X_Init();
-        } else if (!encoder_x.ali) {
+          } else if (!encoder_x.ali && BLDC_CurrentOffsetCalDone()) {
           // Run non-blocking encoder alignment
           if (encoder_x.align_state == 0) {
             Encoder_X_Align_Start(); // Start alignment if not already running
@@ -317,7 +319,7 @@ int main(void) {
         if (!encoder_y.ini){
           // Try to re-initialize the encoder if not yet initialized
           Encoder_Y_Init();
-        } else if (!encoder_y.ali) {
+        } else if (!encoder_y.ali && BLDC_CurrentOffsetCalDone()) {
           // Run non-blocking encoder alignment
           if (encoder_y.align_state == 0) {
             Encoder_Y_Align_Start(); // Start alignment if not already running
@@ -603,15 +605,14 @@ int main(void) {
     board_temp_adcFilt  = (int16_t)(board_temp_adcFixdt >> 16);  // convert fixed-point to integer
     board_temp_deg_c    = (TEMP_CAL_HIGH_DEG_C - TEMP_CAL_LOW_DEG_C) * (board_temp_adcFilt - TEMP_CAL_LOW_ADC) / (TEMP_CAL_HIGH_ADC - TEMP_CAL_LOW_ADC) + TEMP_CAL_LOW_DEG_C;
 #endif
-
-    // ####### CALC CALIBRATED BATTERY VOLTAGE #######
-    batVoltageCalib = batVoltage * BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC;
-
     // ####### CALC DC LINK CURRENT #######
-    left_dc_curr  = -(rtU_Left.i_DCLink * 100) / A2BIT_CONV;   // Left DC Link Current * 100 
+    left_dc_curr  = -(rtU_Left.i_DCLink * 100) / A2BIT_CONV;   // Left DC Link Current * 100  
     right_dc_curr = -(rtU_Right.i_DCLink * 100) / A2BIT_CONV;  // Right DC Link Current * 100
     dc_curr       = left_dc_curr + right_dc_curr;            // Total DC Link Current * 100
-
+    //###### BATTERY VOLTAGE FILTERING #######
+    filtLowPass32(unf_VBUS, BAT_FILT_COEF, &batVoltageFixdt);
+    batVoltage = (int16_t)( batVoltageFixdt >> 16);  // convert fixed-point to integer
+    batVoltageCalib = batVoltage;
     // ####### DEBUG SERIAL OUT #######
     #if defined(DEBUG_SERIAL_USART2) || defined(DEBUG_SERIAL_USART3)
       if (main_loop_counter % 25 == 0) {    // Send data periodically every 125 ms      

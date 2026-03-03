@@ -134,6 +134,7 @@ void count_y_update(void);
 // Initialization Functions
 void BLDC_Init(void);
 void BLDC_SetPwmResolution(uint16_t periodCounts);
+uint8_t BLDC_CurrentOffsetCalDone(void);
 void Input_Lim_Init(void);
 void Input_Init(void);
 void UART_DisableRxErrors(UART_HandleTypeDef *huart);

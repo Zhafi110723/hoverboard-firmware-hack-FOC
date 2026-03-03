@@ -423,7 +423,7 @@ static uint8_t button2;                 // Green
 static uint8_t brakePressed;
 #endif
 
-#if defined(CRUISE_CONTROL_SUPPORT) || (defined(STANDSTILL_HOLD_ENABLE) && (CTRL_TYP_SEL == FOC_CTRL) && (CTRL_MOD_REQ != SPD_MODE))
+#if defined(CRUISE_CONTROL_SUPPORT) || (defined(STANDSTILL_HOLD_ENABLE) && (CTRL_TYP_SEL == FOC_CTRL) && (CTRL_MOD_REQ != CFG_SPD_MODE))
 static uint8_t cruiseCtrlAcv = 0;
 static uint8_t standstillAcv = 0;
 #endif
@@ -1515,7 +1515,7 @@ void updateCurSpdLim(void) {
  * Output: standstillAcv
  */
 void standstillHold(void) {
-  #if defined(STANDSTILL_HOLD_ENABLE) && (CTRL_TYP_SEL == FOC_CTRL) && (CTRL_MOD_REQ != SPD_MODE)
+  #if defined(STANDSTILL_HOLD_ENABLE) && (CTRL_TYP_SEL == FOC_CTRL) && (CTRL_MOD_REQ != CFG_SPD_MODE)
     if (!rtP_Left.b_cruiseCtrlEna) {                                  // If Stanstill in NOT Active -> try Activation
       if (((input1[inIdx].cmd > 50 || input2[inIdx].cmd < -50) && speedAvgAbs < 30) // Check if Brake is pressed AND measured speed is small
           || (input2[inIdx].cmd < 20 && speedAvgAbs < 5)) {           // OR Throttle is small AND measured speed is very small
@@ -1545,7 +1545,7 @@ void standstillHold(void) {
  * Output: input2.cmd (Throtle) with brake component included
  */
 void electricBrake(uint16_t speedBlend, uint8_t reverseDir) {
-  #if defined(ELECTRIC_BRAKE_ENABLE) && (CTRL_TYP_SEL == FOC_CTRL) && (CTRL_MOD_REQ == TRQ_MODE)
+  #if defined(ELECTRIC_BRAKE_ENABLE) && (CTRL_TYP_SEL == FOC_CTRL) && (CTRL_MOD_REQ == CFG_TRQ_MODE)
     int16_t brakeVal;
 
     // Make sure the Brake pedal is opposite to the direction of motion AND it goes to 0 as we reach standstill (to avoid Reverse driving) 
@@ -1899,7 +1899,7 @@ void handleTimeout(void) {
 #if defined(ENCODER_X) || defined(ENCODER_Y)
   // In case of timeout bring the system to a Safe State
   if ((timeoutFlgADC || timeoutFlgSerial || timeoutFlgGen || DLVPA() || overcurrent_fault()) && (!encoder_alignment_active())) {
-      ctrlModReq  = OPEN_MODE;                                          // Request OPEN_MODE. This will bring the motor power to 0 in a controlled way
+      ctrlModReq  = CFG_OPEN_MODE;                                      // Request OPEN_MODE. This will bring the motor power to 0 in a controlled way
   input1[idx].cmd  = 0;
   input2[idx].cmd  = 0;
     } else {
@@ -1915,7 +1915,7 @@ void handleTimeout(void) {
 #else
     // In case of timeout bring the system to a Safe State
     if (timeoutFlgADC || timeoutFlgSerial || timeoutFlgGen) {
-      ctrlModReq  = OPEN_MODE;                                          // Request OPEN_MODE. This will bring the motor power to 0 in a controlled way
+      ctrlModReq  = CFG_OPEN_MODE;                                      // Request OPEN_MODE. This will bring the motor power to 0 in a controlled way
   input1[idx].cmd  = 0;
   input2[idx].cmd  = 0;
     } else {
@@ -2340,15 +2340,15 @@ void sideboardSensors(uint8_t sensors) {
       switch (sensor1_index) {
         case 0:     // FOC VOLTAGE
           rtP_Left.z_ctrlTypSel = rtP_Right.z_ctrlTypSel = FOC_CTRL;
-          ctrlModReqRaw         = VLT_MODE;
+          ctrlModReqRaw         = CFG_VLT_MODE;
           break;
         case 1:     // FOC SPEED
           rtP_Left.z_ctrlTypSel = rtP_Right.z_ctrlTypSel = FOC_CTRL;
-          ctrlModReqRaw         = SPD_MODE;
+          ctrlModReqRaw         = CFG_SPD_MODE;
           break;
         case 2:     // FOC TORQUE
           rtP_Left.z_ctrlTypSel = rtP_Right.z_ctrlTypSel = FOC_CTRL;
-          ctrlModReqRaw         = TRQ_MODE;
+          ctrlModReqRaw         = CFG_TRQ_MODE;
           break;
         case 3:     // SINUSOIDAL
           rtP_Left.z_ctrlTypSel = rtP_Right.z_ctrlTypSel = SIN_CTRL;
@@ -2542,6 +2542,7 @@ void poweroffPressCheck(void) {
   * filtLowPass16(u, 52429, &y);
   * yint = (int16_t)(y >> 16); // the integer output is the fixed-point ouput shifted by 16 bits
   */
+__attribute__((section(".ramfunc"), noinline))
 void filtLowPass32(int32_t u, uint16_t coef, int32_t *y) {
   int64_t tmp;  
   tmp = ((int64_t)((u << 4) - (*y >> 12)) * coef) >> 4;
@@ -2585,13 +2586,13 @@ void rateLimiter16(int16_t u, int16_t rate, int16_t *y) {
 }
 #else
 
+__attribute__((section(".ramfunc"), noinline))
 void filtLowPass32(int32_t u, uint16_t coef, int32_t *y) {
   int64_t tmp;  
   tmp = ((int64_t)((u << 4) - (*y >> 12)) * coef) >> 4;
   tmp = CLAMP(tmp, -2147483648LL, 2147483647LL);  // Overflow protection: 2147483647LL = 2^31 - 1
   *y = (int32_t)tmp + (*y);
 }
-
 void rateLimiter16(int16_t u, int16_t rate, int16_t *y) {
   int16_t q0;
   int16_t q1;
@@ -2615,6 +2616,7 @@ void rateLimiter16(int16_t u, int16_t rate, int16_t *y) {
   * Outputs:      rty_speedR, rty_speedL                = int16_t
   * Parameters:   SPEED_COEFFICIENT, STEER_COEFFICIENT  = fixdt(0,16,14)
   */
+ __attribute__((section(".ramfunc"), noinline))
 void mixerFcn(int16_t rtu_speed, int16_t rtu_steer, int16_t *rty_speedR, int16_t *rty_speedL) {
     int16_t prodSpeed;
     int16_t prodSteer;

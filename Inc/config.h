@@ -58,6 +58,13 @@
 // ADC Total conversion time: this will be used to offset TIM8 in advance of TIM1 to align the Phase current ADC measurement
 // This parameter is used in setup.c
 #define ADC_TOTAL_CONV_TIME     (ADC_CLOCK_DIV * ADC_CONV_CLOCK_CYCLES) // = ((SystemCoreClock / ADC_CLOCK_HZ) * ADC_CONV_CLOCK_CYCLES), where ADC_CLOCK_HZ = SystemCoreClock/ADC_CLOCK_DIV
+
+// Current-sense offset calibration (phase/DC-link ADC centers)
+// Use exact average over CURRENT_SENSE_OFFSET_CAL_SAMPLES startup samples.
+// For 16 kHz ISR and 100 samples -> ~6.25 ms calibration window.
+#define CURRENT_SENSE_OFFSET_INIT             2048
+#define CURRENT_SENSE_OFFSET_CAL_SAMPLES      2000U
+#define CURRENT_SENSE_OFFSET_CAL_MODE_AVG
 // ########################### END OF  DO-NOT-TOUCH SETTINGS ############################
 
 // ############################### BOARD VARIANT ###############################
@@ -75,9 +82,10 @@
  * Write debug output value nr 5 to BAT_CALIB_ADC. make and flash firmware.
  * Then you can verify voltage on debug output value 6 (to get calibrated voltage multiplied by 100).
 */
-#define BAT_FILT_COEF           6553       // battery voltage filter coefficient in fixed-point. coef_fixedPoint = coef_floatingPoint * 2^16. In this case 655 = 0.01 * 2^16
+#define BAT_FILT_COEF           16384       // battery voltage filter coefficient in fixed-point. coef_fixedPoint = coef_floatingPoint * 2^16. In this case 16384 = 0.25 * 2^16
 #define BAT_CALIB_REAL_VOLTAGE  3970      // input voltage measured by multimeter (multiplied by 100). In this case 43.00 V * 100 = 4300
 #define BAT_CALIB_ADC           1492      // adc-value measured by mainboard (value nr 5 on UART debug output)
+#define BAT_CALIB_SCALAR        (uint16_t)BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC
 #define BAT_CELLS               6       // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
 #define BAT_LVL2_ENABLE         0         // to beep or not to beep, 1 or 0
 #define BAT_LVL1_ENABLE         0         // to beep or not to beep, 1 or 0
@@ -151,10 +159,11 @@
 #define SIN_CTRL        1               // [-] Sinusoidal Control Type
 #define FOC_CTRL        2               // [-] Field Oriented Control (FOC) Type
 
-#define OPEN_MODE       0               // [-] OPEN mode
-#define VLT_MODE        1               // [-] VOLTAGE mode
-#define SPD_MODE        2               // [-] SPEED mode
-#define TRQ_MODE        3               // [-] TORQUE mode
+
+#define CFG_OPEN_MODE   0               // [-] OPEN mode
+#define CFG_VLT_MODE    1               // [-] VOLTAGE mode
+#define CFG_SPD_MODE    2               // [-] SPEED mode
+#define CFG_TRQ_MODE    3               // [-] TORQUE mode
 
 // Enable/Disable Motor
 #define MOTOR_LEFT_ENA                  // [-] Enable LEFT motor.  Comment-out if this motor is not needed to be operational
@@ -162,7 +171,7 @@
 
 // Control selections
 #define CTRL_TYP_SEL    FOC_CTRL        // [-] Control type selection: COM_CTRL, SIN_CTRL, FOC_CTRL (default)
-#define CTRL_MOD_REQ    TRQ_MODE        // [-] Control mode request: OPEN_MODE, VLT_MODE (default), SPD_MODE, TRQ_MODE. Note: SPD_MODE and TRQ_MODE are only available for CTRL_FOC!
+#define CTRL_MOD_REQ    CFG_TRQ_MODE    // [-] Control mode request: CFG_OPEN_MODE, CFG_VLT_MODE (default), CFG_SPD_MODE, CFG_TRQ_MODE. Note: CFG_SPD_MODE and CFG_TRQ_MODE are only available for CTRL_FOC!
 #define DIAG_ENA        0              // [-] Motor Diagnostics enable flag: 0 = Disabled, 1 = Enabled (default)
 
 // Limitation settings
@@ -562,7 +571,7 @@
 #ifdef VARIANT_HOVERCAR
   #define FLASH_WRITE_KEY         0x1107  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
   #undef  CTRL_MOD_REQ
-  #define CTRL_MOD_REQ            VLT_MODE  // HOVERCAR works best in TORQUE Mode. VOLTAGE mode is preffered when freewheeling is not desired when throttle is released.
+  #define CTRL_MOD_REQ            CFG_VLT_MODE  // HOVERCAR works best in TORQUE Mode. VOLTAGE mode is preffered when freewheeling is not desired when throttle is released.
   #define CONTROL_ADC             0         // use ADC as input. Number indicates priority for dual-input. Disable CONTROL_SERIAL_USART2, FEEDBACK_SERIAL_USART2, DEBUG_SERIAL_USART2!
   #define SIDEBOARD_SERIAL_USART3 1         // Rx from right sensor board: to use photosensors as buttons. Number indicates priority for dual-input. Comment-out if sideboard is not used!
   #define FEEDBACK_SERIAL_USART3            // Tx to   right sensor board: for LED battery indication. Comment-out if sideboard is not used!
@@ -669,7 +678,7 @@
 */
   #define FLASH_WRITE_KEY     0x1010    // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
   #undef  CTRL_MOD_REQ
-  #define CTRL_MOD_REQ        TRQ_MODE  // SKATEBOARD works best in TORQUE Mode
+  #define CTRL_MOD_REQ        CFG_TRQ_MODE  // SKATEBOARD works best in TORQUE Mode
   // #define RC_PWM_LEFT    0         // use RC PWM as input on the LEFT cable. Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART2!
   #define RC_PWM_RIGHT   0         // use RC PWM as input on the RIGHT cable.  Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART3!
 
@@ -749,12 +758,12 @@
 
 #if defined (INTBRK_L_EN) || defined (EXTBRK_EN)
 
-  //#define BRK_VOLTAGE_RAMP_ENABLED          // Uncomment to enable voltage-based brake resistor fallback ramp (EXPERIMENTAL, USE WITH CAUTION!)(BRAKE COULD GET VERY HOT AND DAMAGE THINGS IF VOLTAGE NOT PROPERLY TUNED!)
-  #define BRAKE_RESISTANCE 300                // [Ohm]3ohm X100 Value of the braking resistor. Set it to your own brake resistor resistance, increase the resistance here a bit for example I use 2.2ohm but I set to 3ohm here to be safe. 
-  #define BRKRESACT_SENS    40 / 20           //[A]40mA  Brake resistor activation sensitivity. Set same as MAX_REGEN_CURRENT if using battery. If using psu set 40mA-60mA. 
+ //#define BRK_VOLTAGE_RAMP_ENABLED          // Uncomment to enable voltage-based brake resistor fallback ramp (EXPERIMENTAL, USE WITH CAUTION!)(BRAKE COULD GET VERY HOT AND DAMAGE IF VOLTAGE NOT PROPERLY TUNED!)
+  #define BRAKE_RESISTANCE 500                // [Ohm]3ohm X100 Value of the braking resistor. Set it to your own brake resistor resistance, increase the resistance here a bit for example I use 2.2ohm but I set to 3ohm here to be safe. 
+  #define BRKRESACT_SENS    0 / 20           //[A]40mA  Brake resistor activation sensitivity. Set same as MAX_REGEN_CURRENT if using battery. If using psu set low enough to not trip reverse current protection.
   #define MAX_REGEN_CURRENT 0 / 20            // [A]0mA  Maximum regenerative current that can be dissipated in the PSU or BATTERY. Set in 20mA steps 0, 20, 40, 60, 80, 100 etc. Set 0 for PSU!
-  //#define BRK_OVERVOLTAGE_RAMP_START (BAT_CELLS * 427) // [V*100] Voltage fallback starts adding brake duty (default 4.10 V/cell) (EXPERIMENTAL, NEEDS FINE TUNING!)
-  //#define BRK_OVERVOLTAGE_RAMP_END   (BAT_CELLS * 450) // [V*100] Voltage fallback reaches full extra duty ramp (default 4.30 V/cell) (EXPERIMENTAL,  NEEDS FINE TUNING!)
+ //#define BRK_OVERVOLTAGE_RAMP_START (BAT_CELLS * 429) // [V*100] Voltage fallback starts adding brake duty (default 4.30 V/cell) (EXPERIMENTAL, NEEDS FINE TUNING!)
+ //#define BRK_OVERVOLTAGE_RAMP_END   (BAT_CELLS * 440) // [V*100] Voltage fallback reaches full extra duty ramp (default 4.40 V/cell) (EXPERIMENTAL,  NEEDS FINE TUNING!)
 
 #endif  
 
@@ -770,7 +779,7 @@
   #define FLASH_WRITE_KEY        0x1011    // Flash memory writing key.
   
   #define CTRL_TYP_SEL           FOC_CTRL   
-  #define CTRL_MOD_REQ           TRQ_MODE  
+  #define CTRL_MOD_REQ           CFG_TRQ_MODE  
   
 #define TANK_STEERING                    // Each input controls each wheel
 #define HSPWM                             //Bypass PWM post proccessing for faster response
@@ -874,7 +883,7 @@
 
   #define FLASH_WRITE_KEY        0x1012    // Flash memory writing key.
   #define CTRL_TYP_SEL           FOC_CTRL 
-  #define CTRL_MOD_REQ           TRQ_MODE  
+  #define CTRL_MOD_REQ           CFG_TRQ_MODE  
   
   #define TANK_STEERING  
 #define MOTOR_LEFT_ENA                  // [-] Enable LEFT motor.  Comment-out if this motor is not needed to be operational

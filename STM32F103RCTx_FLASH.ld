@@ -118,6 +118,8 @@ SECTIONS
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
+    *(.ramfunc)        /* RAM-executed functions copied by startup data init */
+    *(.ramfunc*)       /* RAM-executed functions copied by startup data init */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
 

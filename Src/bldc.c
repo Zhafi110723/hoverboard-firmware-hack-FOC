@@ -71,7 +71,9 @@ volatile uint32_t buzzerTimer = 0;
 static uint8_t  buzzerPrev  = 0;
 static uint8_t  buzzerIdx   = 0;
 static uint8_t  brkResActiveL = 0;
+ #ifdef EXTBRK_EN
 static uint8_t  brkResActiveExt = 0;
+#endif
 
 uint8_t        enable       = 0;        // initially motors are disabled for SAFETY
 static uint8_t enableFin    = 0;
@@ -269,23 +271,41 @@ void DMA1_Channel1_IRQHandler(void) {
     int16_t regenCur = curR_DC - MAX_REGEN_CURRENT;
     const int16_t brkOnThresh = BRKRESACT_SENS;
     const int16_t brkOffThresh = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;
+    const int16_t vBusCalib = batVoltageCalib;
+  #if defined(BRK_VOLTAGE_RAMP_ENABLED)
+    const uint8_t overvoltageRequest = (vBusCalib > BRK_OVERVOLTAGE_RAMP_START);
+    const int16_t rampSpan = (BRK_OVERVOLTAGE_RAMP_END > BRK_OVERVOLTAGE_RAMP_START) ?
+                             (BRK_OVERVOLTAGE_RAMP_END - BRK_OVERVOLTAGE_RAMP_START) : 1;
+  #else
+    const uint8_t overvoltageRequest = 0;
+  #endif
+    int32_t brakeDutyCounts = 0;
 
     if (regenCur < 0) {
       regenCur = 0;
     }
 
     if (!brkResActiveL) {
-      if (regenCur > brkOnThresh) {
+      if ((regenCur > brkOnThresh) || overvoltageRequest) {
         brkResActiveL = 1;
       }
     } else {
-      if (regenCur < brkOffThresh) {
+      if ((regenCur <= brkOffThresh) && !overvoltageRequest) {
         brkResActiveL = 0;
       }
     }
 
     if (brkResActiveL) {
-      I_BusR = CLAMP(((((int32_t)regenCur * BRAKE_RESISTANCE * pwm_res) /(50*batVoltageCalib))) ,0, (((uint32_t)pwm_res*90)/100));
+      const int16_t vBusForDuty = (vBusCalib > 1) ? vBusCalib : 1;
+      brakeDutyCounts = (((int32_t)regenCur * BRAKE_RESISTANCE * pwm_res) / (50 * vBusForDuty));
+
+#if defined(BRK_VOLTAGE_RAMP_ENABLED)
+      if (vBusCalib > BRK_OVERVOLTAGE_RAMP_START) {
+        brakeDutyCounts += (((int32_t)(vBusCalib - BRK_OVERVOLTAGE_RAMP_START) * pwm_res) / rampSpan);
+      }
+#endif
+
+      I_BusR = CLAMP(brakeDutyCounts, 0, (((uint32_t)pwm_res * 90) / 100));
       LEFT_TIM->LEFT_TIM_U = I_BusR;
     } else {
       LEFT_TIM->LEFT_TIM_U = 0;
@@ -365,23 +385,41 @@ void DMA1_Channel1_IRQHandler(void) {
   int16_t busRegenCur = (curR_DC + curL_DC) - MAX_REGEN_CURRENT; // Total bus regen current in x10 resolution
   const int16_t brkOnThreshExt = BRKRESACT_SENS;
   const int16_t brkOffThreshExt = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;
+  const int16_t vBusCalibExt = batVoltageCalib;
+#if defined(BRK_VOLTAGE_RAMP_ENABLED)
+  const uint8_t overvoltageRequestExt = (vBusCalibExt > BRK_OVERVOLTAGE_RAMP_START);
+  const int16_t rampSpanExt = (BRK_OVERVOLTAGE_RAMP_END > BRK_OVERVOLTAGE_RAMP_START) ?
+                              (BRK_OVERVOLTAGE_RAMP_END - BRK_OVERVOLTAGE_RAMP_START) : 1;
+#else
+  const uint8_t overvoltageRequestExt = 0;
+#endif
+  int32_t brakeDutyCountsExt = 0;
 
   if (busRegenCur < 0) {
     busRegenCur = 0;
   }
 
   if (!brkResActiveExt) {
-    if (busRegenCur > brkOnThreshExt) {
+    if ((busRegenCur > brkOnThreshExt) || overvoltageRequestExt) {
       brkResActiveExt = 1;
     }
   } else {
-    if (busRegenCur < brkOffThreshExt) {
+    if ((busRegenCur <= brkOffThreshExt) && !overvoltageRequestExt) {
       brkResActiveExt = 0;
     }
   }
 
   if (brkResActiveExt) {
-    I_BusR = CLAMP(((((int32_t)busRegenCur * BRAKE_RESISTANCE * pwm_res) /(50*batVoltageCalib))) ,0, (((uint32_t)pwm_res*90)/100));
+    const int16_t vBusForDutyExt = (vBusCalibExt > 1) ? vBusCalibExt : 1;
+    brakeDutyCountsExt = (((int32_t)busRegenCur * BRAKE_RESISTANCE * pwm_res) / (50 * vBusForDutyExt));
+
+#if defined(BRK_VOLTAGE_RAMP_ENABLED)
+    if (vBusCalibExt > BRK_OVERVOLTAGE_RAMP_START) {
+      brakeDutyCountsExt += (((int32_t)(vBusCalibExt - BRK_OVERVOLTAGE_RAMP_START) * pwm_res) / rampSpanExt);
+    }
+#endif
+
+    I_BusR = CLAMP(brakeDutyCountsExt, 0, (((uint32_t)pwm_res * 90) / 100));
     EXT_PWM_BRK = I_BusR;
   } else {
     EXT_PWM_BRK = 0;

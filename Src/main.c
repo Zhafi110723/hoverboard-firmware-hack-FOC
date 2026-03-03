@@ -99,7 +99,7 @@ extern volatile int pwmr;               // global variable for pwm right. -1000 
 
 extern uint8_t enable;                  // global variable for motor enable
 
-extern int16_t unf_VBUS;                //ADC raw
+extern int16_t unf_VBUS;                // Calibrated battery voltage sample in V*100 from ISR path
 int16_t batVoltage              = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE;
 static int32_t batVoltageFixdt  = (400 * BAT_CELLS * BAT_CALIB_ADC) / BAT_CALIB_REAL_VOLTAGE << 16;  // Fixed-point filter output initialized at 400 V*100/cell = 4 V/cell converted to fixed-point
 int32_t board_temp_adcFixdt = 0;  
@@ -305,7 +305,7 @@ int main(void) {
         if (!encoder_x.ini){
           // Try to re-initialize the encoder if not yet initialized
           Encoder_X_Init();
-          } else if (!encoder_x.ali && BLDC_CurrentOffsetCalDone()) {
+          } else if (!encoder_x.ali && BLDC_CurrentOffsetCalDone()) { // Start alignment only after current-offset calibration is complete
           // Run non-blocking encoder alignment
           if (encoder_x.align_state == 0) {
             Encoder_X_Align_Start(); // Start alignment if not already running
@@ -319,7 +319,7 @@ int main(void) {
         if (!encoder_y.ini){
           // Try to re-initialize the encoder if not yet initialized
           Encoder_Y_Init();
-        } else if (!encoder_y.ali && BLDC_CurrentOffsetCalDone()) {
+        } else if (!encoder_y.ali && BLDC_CurrentOffsetCalDone()) { // Start alignment only after current-offset calibration is complete
           // Run non-blocking encoder alignment
           if (encoder_y.align_state == 0) {
             Encoder_Y_Align_Start(); // Start alignment if not already running

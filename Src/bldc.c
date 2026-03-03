@@ -106,6 +106,7 @@ extern int16_t batVoltageCalib;
 int32_t emulated_mech_angle_deg = 0; // For encoder simulation during alignment
 
 uint8_t BLDC_CurrentOffsetCalDone(void) {
+  // Export calibration completion so main-loop alignment can wait for valid current offsets.
   return (offsetcount >= CURRENT_SENSE_OFFSET_CAL_SAMPLES) ? 1U : 0U; 
 }
 
@@ -139,6 +140,7 @@ void DMA1_Channel1_IRQHandler(void) {
 
     offsetcount++;
     if (offsetcount == CURRENT_SENSE_OFFSET_CAL_SAMPLES) {
+      // Final exact-average ADC offsets; +3 keeps measured DC-link current centered on this hardware.
       offsetrlA = (int16_t)(offsetSumRlA / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
       offsetrlB = (int16_t)(offsetSumRlB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
       offsetrrB = (int16_t)(offsetSumRrB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
@@ -157,10 +159,12 @@ void DMA1_Channel1_IRQHandler(void) {
   #endif
     return;
   }else if(offsetcount == CURRENT_SENSE_OFFSET_CAL_SAMPLES) {
+    // Re-enable outputs once when calibration completes, then move past this state.
     enable = 1;
     offsetcount++; // just to make sure we do not enter the calibration branch again
 }
 
+  // Convert raw battery ADC counts to calibrated V*100 domain.
   unf_VBUS = adc_buffer.adc3.value.batt1 * BAT_CALIB_SCALAR;
  // if (buzzerTimer % 100 == 0) {  // Filter battery voltage at a slower sampling rate
  // 
@@ -312,6 +316,7 @@ void DMA1_Channel1_IRQHandler(void) {
     LEFT_TIM->LEFT_TIM_V    = (uint16_t)CLAMP(vl + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
     LEFT_TIM->LEFT_TIM_W    = (uint16_t)CLAMP(wl + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
     #else
+    // INTBRK: ON threshold uses BRKRESACT_SENS, OFF threshold uses MAX_REGEN_CURRENT.
     int16_t regenCur = curR_DC - MAX_REGEN_CURRENT;
     const int16_t brkOnThresh = BRKRESACT_SENS;
     //const int16_t brkOffThresh = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;
@@ -426,6 +431,7 @@ void DMA1_Channel1_IRQHandler(void) {
 
   //External Break Resistor Output Control
   #ifdef EXTBRK_EN
+  // EXTBRK uses total bus regen current; thresholds mirror INTBRK semantics.
   int16_t busRegenCur = (curR_DC + curL_DC) - MAX_REGEN_CURRENT; // Total bus regen current in x10 resolution
   const int16_t brkOnThreshExt = BRKRESACT_SENS;
   //const int16_t brkOffThreshExt = (BRKRESACT_SENS > 1) ? (BRKRESACT_SENS / 2) : 0;

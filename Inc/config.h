@@ -85,7 +85,7 @@
 #define BAT_FILT_COEF           16384       // battery voltage filter coefficient in fixed-point. coef_fixedPoint = coef_floatingPoint * 2^16. In this case 16384 = 0.25 * 2^16
 #define BAT_CALIB_REAL_VOLTAGE  3970      // input voltage measured by multimeter (multiplied by 100). In this case 43.00 V * 100 = 4300
 #define BAT_CALIB_ADC           1492      // adc-value measured by mainboard (value nr 5 on UART debug output)
-#define BAT_CALIB_SCALAR        (uint16_t)BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC
+#define BAT_CALIB_SCALAR        (uint16_t)BAT_CALIB_REAL_VOLTAGE / BAT_CALIB_ADC // Integer calibration scalar used in ISR battery conversion
 #define BAT_CELLS               6       // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
 #define BAT_LVL2_ENABLE         0         // to beep or not to beep, 1 or 0
 #define BAT_LVL1_ENABLE         0         // to beep or not to beep, 1 or 0

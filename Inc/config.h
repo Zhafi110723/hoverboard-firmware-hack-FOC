@@ -749,12 +749,12 @@
 
 #if defined (INTBRK_L_EN) || defined (EXTBRK_EN)
 
-  #define BRK_VOLTAGE_RAMP_ENABLED          // Uncomment to enable voltage-based brake resistor fallback ramp (EXPERIMENTAL, USE WITH CAUTION!)(BRAKE COULD GET VERY HOT AND DAMAGE THINGS IF VOLTAGE NOT PROPERLY TUNED!)
+  //#define BRK_VOLTAGE_RAMP_ENABLED          // Uncomment to enable voltage-based brake resistor fallback ramp (EXPERIMENTAL, USE WITH CAUTION!)(BRAKE COULD GET VERY HOT AND DAMAGE THINGS IF VOLTAGE NOT PROPERLY TUNED!)
   #define BRAKE_RESISTANCE 300                // [Ohm]3ohm X100 Value of the braking resistor. Set it to your own brake resistor resistance, increase the resistance here a bit for example I use 2.2ohm but I set to 3ohm here to be safe. 
   #define BRKRESACT_SENS    40 / 20           //[A]40mA  Brake resistor activation sensitivity. Set same as MAX_REGEN_CURRENT if using battery. If using psu set 40mA-60mA. 
   #define MAX_REGEN_CURRENT 0 / 20            // [A]0mA  Maximum regenerative current that can be dissipated in the PSU or BATTERY. Set in 20mA steps 0, 20, 40, 60, 80, 100 etc. Set 0 for PSU!
-  #define BRK_OVERVOLTAGE_RAMP_START (BAT_CELLS * 427) // [V*100] Voltage fallback starts adding brake duty (default 4.10 V/cell) (EXPERIMENTAL, NEEDS FINE TUNING!)
-  #define BRK_OVERVOLTAGE_RAMP_END   (BAT_CELLS * 450) // [V*100] Voltage fallback reaches full extra duty ramp (default 4.30 V/cell) (EXPERIMENTAL,  NEEDS FINE TUNING!)
+  //#define BRK_OVERVOLTAGE_RAMP_START (BAT_CELLS * 427) // [V*100] Voltage fallback starts adding brake duty (default 4.10 V/cell) (EXPERIMENTAL, NEEDS FINE TUNING!)
+  //#define BRK_OVERVOLTAGE_RAMP_END   (BAT_CELLS * 450) // [V*100] Voltage fallback reaches full extra duty ramp (default 4.30 V/cell) (EXPERIMENTAL,  NEEDS FINE TUNING!)
 
 #endif  
 

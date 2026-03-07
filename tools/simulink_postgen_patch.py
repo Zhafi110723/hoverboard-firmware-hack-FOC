@@ -164,6 +164,49 @@ def _patch_param_access(text: str) -> tuple[str, list[str]]:
     return new_text, details
 
 
+def _patch_foc_rtP_plumbing(text: str) -> tuple[str, list[str]]:
+    details: list[str] = []
+
+    if "rtP->" not in text or "void FOC(" not in text:
+        return text, details
+
+    prototype_old = (
+        "                rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
+        "                rtu_b_cruiseCtrlEna, int16_T *rty_Vq, int16_T *rty_Vd, DW_FOC\n"
+        "                *localDW);"
+    )
+    prototype_new = (
+        "                rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
+        "                rtu_b_cruiseCtrlEna, const P *rtP, int16_T *rty_Vq, int16_T\n"
+        "                *rty_Vd, DW_FOC *localDW);"
+    )
+    if prototype_old in text and prototype_new not in text:
+        text = text.replace(prototype_old, prototype_new, 1)
+        details.append("updated FOC() prototype to accept rtP")
+
+    definition_old = (
+        "         rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
+        "         rtu_b_cruiseCtrlEna, int16_T *rty_Vq, int16_T *rty_Vd, DW_FOC *localDW)"
+    )
+    definition_new = (
+        "         rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
+        "         rtu_b_cruiseCtrlEna, const P *rtP, int16_T *rty_Vq, int16_T *rty_Vd,\n"
+        "         DW_FOC *localDW)"
+    )
+    if definition_old in text and definition_new not in text:
+        text = text.replace(definition_old, definition_new, 1)
+        details.append("updated FOC() definition to accept rtP")
+
+    old_call = "rtDW->UnitDelay4_DSTATE_a, rtP->b_cruiseCtrlEna, &rtDW->Merge,"
+    new_call = "rtDW->UnitDelay4_DSTATE_a, rtP->b_cruiseCtrlEna, rtP, &rtDW->Merge,"
+    if old_call in text:
+        count = text.count(old_call)
+        text = text.replace(old_call, new_call)
+        details.append(f"updated {count} FOC() call site(s) to forward rtP")
+
+    return text, details
+
+
 def _patch_data_params_name(text: str) -> tuple[str, list[str]]:
     details: list[str] = []
 
@@ -198,6 +241,8 @@ def patch_file(path: Path) -> FileEdit:
         text, d = _ensure_local_param_ptr(text, "BLDC_controller_step")
         details += d
         text, d = _patch_param_access(text)
+        details += d
+        text, d = _patch_foc_rtP_plumbing(text)
         details += d
 
     elif path.name == "BLDC_controller_data.c":

@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'BLDC_controller'.
  *
- * Model version                  : 16.32
+ * Model version                  : 16.34
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Mon Feb 16 22:38:23 2026
+ * C/C++ source code generated on : Sat Mar  7 17:53:28 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-M
@@ -22,7 +22,7 @@ P rtP_Left = {
   /* Variable: dV_openRate
    * Referenced by: '<S37>/dV_openRate'
    */
-  12288,
+  4096,
 
   /* Variable: dz_cntTrnsDetHi
    * Referenced by: '<S17>/dz_cntTrnsDet'
@@ -118,7 +118,7 @@ P rtP_Left = {
    *   '<S191>/cf_KbLimProt'
    *   '<S193>/cf_KbLimProt'
    */
-  768U,
+  256U,
 
   /* Variable: cf_idKp
    * Referenced by: '<S66>/cf_idKp2'
@@ -143,46 +143,46 @@ P rtP_Left = {
   /* Variable: cf_idKi
    * Referenced by: '<S66>/cf_idKi2'
    */
-  4915U,
+  1638U,
 
   /* Variable: cf_iqKi
    * Referenced by: '<S65>/cf_iqKi1'
    */
-  4915U,
+  1638U,
 
   /* Variable: cf_iqKiLimProt
    * Referenced by:
    *   '<S190>/cf_iqKiLimProt'
    *   '<S193>/cf_iqKiLimProt'
    */
-  737U,
+  246U,
 
   /* Variable: cf_nKi
    * Referenced by: '<S64>/cf_nKi'
    */
-  251U,
+  84U,
 
   /* Variable: cf_nKiLimProt
    * Referenced by:
    *   '<S191>/cf_nKiLimProt'
    *   '<S193>/cf_nKiLimProt'
    */
-  246U,
+  82U,
 
   /* Variable: cf_speedCoef
    * Referenced by: '<S17>/cf_speedCoef'
    */
-  32000U,
+  26667U,
 
   /* Variable: t_errDequal
    * Referenced by: '<S20>/t_errDequal'
    */
-  9600U,
+  28800U,
 
   /* Variable: t_errQual
    * Referenced by: '<S20>/t_errQual'
    */
-  1280U,
+  3840U,
 
   /* Variable: b_angleMeasEna
    * Referenced by:
@@ -199,7 +199,7 @@ P rtP_Left = {
   /* Variable: b_diagEna
    * Referenced by: '<S4>/b_diagEna'
    */
-  true,
+  false,
 
   /* Variable: b_fieldWeakEna
    * Referenced by:
@@ -211,7 +211,7 @@ P rtP_Left = {
   /* Variable: n_polePairs
    * Referenced by: '<S15>/n_polePairs'
    */
-  5U,
+  6U,
 
   /* Variable: z_ctrlTypSel
    * Referenced by: '<S1>/z_ctrlTypSel'

@@ -714,7 +714,7 @@
 //#define ENCODER_Y                 //enable Y encoder to left motor
 #define INTBRK_L_EN                 //enable brake resistor control on PHASE A left side driver, do not disable if break reistor is connected 
 //#define EXTBRK_EN                 // enable brake resistor control pin on left uart port, pick PA2 or PA3 below
-//#define CFG_USE_BW_PI_CALC        // use automatic PI gain calculation based on bandwidth, L, R, and VBUS. Comment-out to use manual QP/QI/DP/DI values below.
+#define CFG_USE_BW_PI_CALC        // use automatic PI gain calculation based on bandwidth, L, R, and VBUS. Comment-out to use manual QP/QI/DP/DI values below.
 #ifdef EXTBRK_EN                         
 #define EXTBRK_USE_CH3              // PA2      
 //#define EXTBRK_USE_CH4            // PA3
@@ -727,11 +727,9 @@
  * - Default: use manual QP/QI/DP/DI values.
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
-#define CFG_TARGET_BANDWIDTH_HZ   400.0f   // [Hz] current-loop target bandwidth
-#define CFG_TARGET_BANDWIDTH_HZ_INT 300    // [Hz] integer mirror for compile-time checks
+#define CFG_TARGET_BANDWIDTH_HZ   500.0f                 // [Hz] current-loop target bandwidth
 #define CFG_MOTOR_L_H             0.008f  // [H]  phase inductance
 #define CFG_MOTOR_R_OHM           5.0f    // [Ohm] phase resistance
-#define CFG_CURR_FILT_TARGET_MULT 3U    // [-] target multiplier for current filter cutoff frequency relative to bandwidth. Higher value == softer filter. Recommended: 3+.
 #else
 //Q axis control gains
 #define QP            0.3f                                  //[-] P gain
@@ -862,8 +860,7 @@
  * - Default: use manual QP/QI/DP/DI values.
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
-#define CFG_TARGET_BANDWIDTH_HZ   300.0f   // [Hz] current-loop target bandwidth
-#define CFG_TARGET_BANDWIDTH_HZ_INT 300    // [Hz] integer mirror for compile-time checks
+#define CFG_TARGET_BANDWIDTH_HZ   300.0f                 // [Hz] current-loop target bandwidth
 #define CFG_MOTOR_L_H             0.0003f  // [H]  phase inductance
 #define CFG_MOTOR_R_OHM           0.3f    // [Ohm] phase resistance
 #define CFG_CURR_FILT_TARGET_MULT 3U    // [-] target multiplier for current filter cutoff frequency relative to bandwidth. Higher value == softer filter. Recommended: 3+.
@@ -916,50 +913,55 @@
 #endif
 
 /* ===================== Finalize PI gains after all variant overrides ===================== */
-/* Current measurement low-pass filter coefficient: fixdt(0,16,16) */
+#if defined(CFG_USE_BW_PI_CALC)
+#define CFG_CURR_FILT_TARGET_MULT  3U  // [-] EXACT target REAL multiplier for current filter cutoff frequency. Recommended: 3+.
+#define CFG_TARGET_BANDWIDTH_HZ_INT ((int)(CFG_TARGET_BANDWIDTH_HZ + 0.5f)) // [Hz] integer mirror derived from bandwidth
+#define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
+#define CFG_PI_CONST_2PI          6.28318530717958647692f
+#define CFG_PI_CONST              3.14159265f
+#define CFG_TS                     (1.0f / (float)PWM_FREQ)
+/* Compile-time upper-bound check: Nyquist Limit
+ * Ensure the requested REAL cutoff frequency does not exceed half the PWM frequency.
+ */
+_Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_FREQ / 2),
+               "BUILD ERROR: Requested Real Filter Cutoff exceeds the Nyquist Limit (PWM_FREQ / 2). Lower the multiplier or bandwidth.");
+/* 
+ * --- Exact Pre-Warping Calculation ---
+ * Calculates the exact internal multiplier required to compensate for digital frequency warping.
+ * Uses Taylor approximation: x = R + (R^2*Z)/2 + (R^3*Z^2)/6 + (R^4*Z^3)/24 + (R^5*Z^4)/120
+ * Where R is the desired Real Ratio and Z = 2*pi*BW*Ts.
+ */
+#define CFG_WARP_Z                 (CFG_PI_CONST_2PI * CFG_TARGET_BANDWIDTH_HZ * CFG_TS)
+#define CFG_FILT_R                 ((float)CFG_CURR_FILT_TARGET_MULT)
+#define CFG_WARPED_MULT            (CFG_FILT_R + \
+                                   (((CFG_FILT_R * CFG_FILT_R) * CFG_WARP_Z) / 2.0f) + \
+                                   (((CFG_FILT_R * CFG_FILT_R * CFG_FILT_R) * (CFG_WARP_Z * CFG_WARP_Z)) / 6.0f) + \
+                                   (((CFG_FILT_R * CFG_FILT_R * CFG_FILT_R * CFG_FILT_R) * (CFG_WARP_Z * CFG_WARP_Z * CFG_WARP_Z)) / 24.0f) + \
+                                   (((CFG_FILT_R * CFG_FILT_R * CFG_FILT_R * CFG_FILT_R * CFG_FILT_R) * (CFG_WARP_Z * CFG_WARP_Z * CFG_WARP_Z * CFG_WARP_Z)) / 120.0f))
+  #undef QP
+  #undef QI
+  #undef DP
+  #undef DI
+  #undef CFG_CURR_FILT
+  #undef CFG_CF_CURR_FILT
 /*
  * Auto formula:
  *   VBUS = BAT_CELLS * 4.2
  *   QP   = 2*pi*Bandwidth*L / VBUS
  *   QI   = QP * R/L
  */
-#if defined(CFG_USE_BW_PI_CALC)
-#define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
-#define CFG_PI_CONST_2PI          6.28318530717958647692f
-/* Compile-time lower-bound check: ensure the chosen multiplier yields >= 2x cutoff.
- * Uses a Taylor approximation of the bilinear warp: (e^Y - 1)/(Y/2) ≈ 2*(1 + Y/2 + Y^2/6 + Y^3/24 + Y^4/120)
- */
-#define CFG_PI_CONST               3.14159265f
-  /* CFG_TS is defined later; forward-declare a local Ts mirror for this check */
-#define CFG_WARP_TS                (1.0f / (float)PWM_FREQ)
-#define CFG_WARP_Y                 (4.0f * CFG_PI_CONST * CFG_TARGET_BANDWIDTH_HZ * CFG_WARP_TS)
-#define CFG_MIN_REQUIRED_MULT      (2.0f * (1.0f + \
-                                       (CFG_WARP_Y * 0.5f) + \
-                                       ((CFG_WARP_Y * CFG_WARP_Y) / 6.0f) + \
-                                       ((CFG_WARP_Y * CFG_WARP_Y * CFG_WARP_Y) / 24.0f) + \
-                                       ((CFG_WARP_Y * CFG_WARP_Y * CFG_WARP_Y * CFG_WARP_Y) / 120.0f)))
-_Static_assert((int)((float)CFG_CURR_FILT_TARGET_MULT * 1000.0f) >= (int)(CFG_MIN_REQUIRED_MULT * 1000.0f),
-               "BUILD ERROR: Filter multiplier too low; real cutoff would be < 2x control bandwidth.");
-
-  #undef QP
-  #undef QI
-  #undef DP
-  #undef DI
-  #undef CFG_CURR_FIL
-  #undef CFG_CF_CURR_FILT
   #define QP            ((CFG_PI_CONST_2PI * CFG_TARGET_BANDWIDTH_HZ * CFG_MOTOR_L_H) / CFG_VBUS_V) // [-] P gain
   #define QI            (QP * (CFG_MOTOR_R_OHM / CFG_MOTOR_L_H))                                     // [-] I gain
   #define DP            QP                                                                             // [-] P gain
   #define DI            QI                                                                             // [-] I gain
-  #define CFG_TS                       (1.0f / (float)PWM_FREQ)
-  #define CFG_CURR_FILT                (CFG_TS / (CFG_TS + (1.0f / (CFG_PI_CONST_2PI * (CFG_TARGET_BANDWIDTH_HZ * (float)CFG_CURR_FILT_TARGET_MULT)))))
-  //#define CFG_CURR_FILT_VERIFIED_HZ    ((-logf(1.0f - CFG_CURR_FILT)) / (CFG_PI_CONST_2PI * CFG_TS))
+  /* Current measurement low-pass filter coefficient: fixdt(0,16,16) */
+  #define CFG_CURR_FILT                (CFG_TS / (CFG_TS + (1.0f / (CFG_PI_CONST_2PI * (CFG_TARGET_BANDWIDTH_HZ * CFG_WARPED_MULT)))))
   #define CFG_CF_CURR_FILT             FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(CFG_CURR_FILT, 16))
 #endif
 
 /* Final integrator scaling after all QI/DI overrides */
-#define QaI              (float)(QI/PWM_FREQ)      //Integrator scaling//
-#define DaI              (float)(DI/PWM_FREQ)      //Integrator scaling//
+#define QaI              (float)(QI/(PWM_FREQ))      //Integrator scaling//
+#define DaI              (float)(DI/(PWM_FREQ))      //Integrator scaling//
 
 /* Gain values pre-scaled for fixed-point model parameters (after variant overrides) */
 #define QP_FIXDT_12                  FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QP, 12))

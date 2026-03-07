@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'BLDC_controller'.
  *
- * Model version                  : 16.32
+ * Model version                  : 16.34
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Mon Feb 16 22:38:23 2026
+ * C/C++ source code generated on : Sat Mar  7 17:53:28 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-M
@@ -159,9 +159,21 @@ typedef struct {
   boolean_T icLoad;                    /* '<S70>/Resettable Delay' */
 } DW_PI_clamp_fixdt;
 
-/* Block signals and states (default storage) for system '<Root>' */
+/* Block signals and states (default storage) for system '<S7>/FOC' */
 typedef struct {
   DW_PI_clamp_fixdt PI_clamp_fixdt_j;  /* '<S64>/PI_clamp_fixdt' */
+  int16_T constant2;                   /* '<S66>/constant2' */
+  int16_T Integrator_DSTATE;           /* '<S111>/Integrator' */
+  int16_T Integrator_DSTATE_k;         /* '<S169>/Integrator' */
+  int8_T If1_ActiveSubsystem;          /* '<S50>/If1' */
+  int8_T SwitchCase_ActiveSubsystem;   /* '<S62>/Switch Case' */
+  int8_T If1_ActiveSubsystem_a;        /* '<S62>/If1' */
+  uint8_T Integrator_IC_LOADING;       /* '<S111>/Integrator' */
+} DW_FOC;
+
+/* Block signals and states (default storage) for system '<Root>' */
+typedef struct {
+  DW_FOC FOC_h;                        /* '<S7>/FOC' */
   DW_I_backCalc_fixdt I_backCalc_fixdt_h;/* '<S191>/I_backCalc_fixdt' */
   DW_I_backCalc_fixdt I_backCalc_fixdt1;/* '<S193>/I_backCalc_fixdt1' */
   DW_I_backCalc_fixdt I_backCalc_fixdt_c;/* '<S193>/I_backCalc_fixdt' */
@@ -173,12 +185,13 @@ typedef struct {
   int32_T UnitDelay_DSTATE;            /* '<S43>/UnitDelay' */
   int32_T Sum1;                        /* '<S15>/Sum1' */
   int32_T Switch1_m;                   /* '<S43>/Switch1' */
+  int32_T Sum1_o;                      /* '<S41>/Sum1' */
+  int32_T Gain3;                       /* '<S37>/Gain3' */
   int16_T Gain4_o[3];                  /* '<S60>/Gain4' */
   int16_T DataTypeConversion[2];       /* '<S59>/Data Type Conversion' */
   int16_T iv[4];
   int16_T TmpSignalConversionAtLow_Pa[2];
   int16_T Merge;                       /* '<S62>/Merge' */
-  int16_T constant2;                   /* '<S66>/constant2' */
   int16_T Switch2_g;                   /* '<S177>/Switch2' */
   int16_T Divide1_d;                   /* '<S189>/Divide1' */
   int16_T Gain1;                       /* '<S189>/Gain1' */
@@ -209,17 +222,16 @@ typedef struct {
   int16_T UnitDelay5_DSTATE;           /* '<S17>/UnitDelay5' */
   int16_T UnitDelay4_DSTATE_f;         /* '<S13>/UnitDelay4' */
   int16_T UnitDelay4_DSTATE_a;         /* '<S8>/UnitDelay4' */
-  int16_T Integrator_DSTATE;           /* '<S111>/Integrator' */
-  int16_T Integrator_DSTATE_k;         /* '<S169>/Integrator' */
+  int16_T Switch3;                     /* '<S17>/Switch3' */
+  int16_T Saturation;                  /* '<S1>/Saturation' */
+  int16_T Saturation1;                 /* '<S1>/Saturation1' */
+  int16_T Merge_c;                     /* '<S3>/Merge' */
   int8_T Switch2_a;                    /* '<S12>/Switch2' */
   int8_T UnitDelay2_DSTATE_o;          /* '<S12>/UnitDelay2' */
   int8_T If1_ActiveSubsystem;          /* '<S7>/If1' */
   int8_T If2_ActiveSubsystem;          /* '<S7>/If2' */
-  int8_T If1_ActiveSubsystem_f;        /* '<S50>/If1' */
-  int8_T SwitchCase_ActiveSubsystem;   /* '<S62>/Switch Case' */
-  int8_T If1_ActiveSubsystem_a;        /* '<S62>/If1' */
   int8_T If1_ActiveSubsystem_b;        /* '<S51>/If1' */
-  int8_T SwitchCase_ActiveSubsystem_o; /* '<S189>/Switch Case' */
+  int8_T SwitchCase_ActiveSubsystem;   /* '<S189>/Switch Case' */
   int8_T If2_ActiveSubsystem_k;        /* '<S33>/If2' */
   int8_T If2_ActiveSubsystem_a;        /* '<S48>/If2' */
   uint8_T z_ctrlMod;                   /* '<S5>/F03_02_Control_Mode_Manager' */
@@ -227,7 +239,6 @@ typedef struct {
   uint8_T UnitDelay3_DSTATE_f;         /* '<S10>/UnitDelay3' */
   uint8_T UnitDelay1_DSTATE;           /* '<S10>/UnitDelay1' */
   uint8_T UnitDelay2_DSTATE_k;         /* '<S10>/UnitDelay2' */
-  uint8_T Integrator_IC_LOADING;       /* '<S111>/Integrator' */
   uint8_T is_active_c2_BLDC_controller;/* '<S5>/F03_02_Control_Mode_Manager' */
   uint8_T is_c2_BLDC_controller;       /* '<S5>/F03_02_Control_Mode_Manager' */
   uint8_T is_ACTIVE;                   /* '<S5>/F03_02_Control_Mode_Manager' */

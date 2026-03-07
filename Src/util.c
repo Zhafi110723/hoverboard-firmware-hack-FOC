@@ -485,6 +485,7 @@ void BLDC_Init(void) {
   rtP_Left.cf_idKp              = CFG_CF_IDKP;
   rtP_Left.cf_iqKi              = CFG_CF_IQKI;
   rtP_Left.cf_iqKp              = CFG_CF_IQKP;
+  rtP_Left.cf_currFilt          = CFG_CF_CURR_FILT;
 
   rtP_Right                     = rtP_Left;     // Copy the Left motor parameters to the Right motor parameters
   rtP_Right.z_selPhaCurMeasABC  = 1;            // Right motor measured current phases {Green, Blue} = {iA, iB} -> do NOT change

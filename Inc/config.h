@@ -3,6 +3,7 @@
 #define CONFIG_H
 
 #include "stm32f1xx_hal.h"
+#include <math.h>
 
 // ############################### VARIANT SELECTION ###############################
 // PlatformIO: uncomment desired variant in platformio.ini
@@ -60,8 +61,6 @@
 #define ADC_TOTAL_CONV_TIME     (ADC_CLOCK_DIV * ADC_CONV_CLOCK_CYCLES) // = ((SystemCoreClock / ADC_CLOCK_HZ) * ADC_CONV_CLOCK_CYCLES), where ADC_CLOCK_HZ = SystemCoreClock/ADC_CLOCK_DIV
 
 // Current-sense offset calibration (phase/DC-link ADC centers)
-// Use exact average over CURRENT_SENSE_OFFSET_CAL_SAMPLES startup samples.
-// For 16 kHz ISR and 100 samples -> ~6.25 ms calibration window.
 #define CURRENT_SENSE_OFFSET_INIT             2048
 #define CURRENT_SENSE_OFFSET_CAL_SAMPLES      2000U
 #define CURRENT_SENSE_OFFSET_CAL_MODE_AVG
@@ -195,20 +194,13 @@
 #define FIELD_WEAK_HI   1000            // (1000, 1500] Input target High threshold for reaching maximum Field Weakening / Phase Advance. Do NOT set this higher than 1500.
 #define FIELD_WEAK_LO   750             // ( 500, 1000] Input target Low threshold for starting Field Weakening / Phase Advance. Do NOT set this higher than 1000.
 
-//Q axis control gains                      
-#define QP              0.3f                                  //[-] P gain
-#define QI              100.0f                                //[-] I gain
-     
+//Q axis control gains
+#define QP            0.3f                                  //[-] P gain
+#define QI            100.0f                                //[-] I gain
+
 //D axis control gains
-#define DP              0.2f                                   //[-] P gain   
-#define DI              50.0f                                 //[-] I gain
-
-
-///Dont touch
-#define QaI              (float)(QI/(PWM_FREQ/3.0f))      //Integrator scaling//                     
-#define DaI              (float)(DI/(PWM_FREQ/3.0f))      //Integrator scaling//  
-///End of Dont touch
-
+#define DP            0.2f                                  //[-] P gain
+#define DI            50.0f                                 //[-] I gain
 /* BLDC gain parameter bridge (fixed-point model)
  * Compile-time conversion from float tuning values to fixed-point parameters.
  */
@@ -217,18 +209,6 @@
 #define FIXDT_ROUND_TO_INT(x)        ((int32_t)(((x) >= 0.0f) ? ((x) + 0.5f) : ((x) - 0.5f)))
 #define FIXDT_FROM_FLOAT(x, frac)    FIXDT_ROUND_TO_INT((x) * (float)(1U << (frac)))
 #define FIXDT_CLAMP_U16(x)           ((uint16_t)(((x) < 0) ? 0 : (((x) > 65535) ? 65535 : (x))))
-
-/* Gain values pre-scaled for fixed-point model parameters */
-#define QP_FIXDT_12                  FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QP, 12))
-#define DP_FIXDT_12                  FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DP, 12))
-#define QaI_FIXDT_16                 FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QaI, 16))
-#define DaI_FIXDT_16                 FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DaI, 16))
-
-/* Unified gain macros used by BLDC_Init() */
-#define CFG_CF_IDKI                  DaI_FIXDT_16
-#define CFG_CF_IDKP                  DP_FIXDT_12
-#define CFG_CF_IQKI                  QaI_FIXDT_16
-#define CFG_CF_IQKP                  QP_FIXDT_12
 
 //#define BEEPER_OFF
 //#define ENCODER_X
@@ -734,27 +714,34 @@
 //#define ENCODER_Y                 //enable Y encoder to left motor
 #define INTBRK_L_EN                 //enable brake resistor control on PHASE A left side driver, do not disable if break reistor is connected 
 //#define EXTBRK_EN                 // enable brake resistor control pin on left uart port, pick PA2 or PA3 below
+//#define CFG_USE_BW_PI_CALC        // use automatic PI gain calculation based on bandwidth, L, R, and VBUS. Comment-out to use manual QP/QI/DP/DI values below.
 #ifdef EXTBRK_EN                         
 #define EXTBRK_USE_CH3              // PA2      
 //#define EXTBRK_USE_CH4            // PA3
 #endif
 
 #define BAT_CELLS               12      // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
-
-//Q axis control gains                      
-#define QP              0.6f                                  //[-] P gain
-#define QI              400.0f                                //[-] I gain
-     
+#if defined(CFG_USE_BW_PI_CALC)
+/*
+ * D/Q current-loop PI tuning
+ * - Default: use manual QP/QI/DP/DI values.
+ * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
+ */
+#define CFG_TARGET_BANDWIDTH_HZ   400.0f   // [Hz] current-loop target bandwidth
+#define CFG_TARGET_BANDWIDTH_HZ_INT 300    // [Hz] integer mirror for compile-time checks
+#define CFG_MOTOR_L_H             0.008f  // [H]  phase inductance
+#define CFG_MOTOR_R_OHM           5.0f    // [Ohm] phase resistance
+#define CFG_CURR_FILT_TARGET_MULT 3U    // [-] target multiplier for current filter cutoff frequency relative to bandwidth. Higher value == softer filter. Recommended: 3+.
+#else
+//Q axis control gains
+#define QP            0.3f                                  //[-] P gain
+#define QI            100.0f                                //[-] I gain
 //D axis control gains
-#define DP              0.6f                                   //[-] P gain   
-#define DI              400.0f                                 //[-] I gain
-
-
-///Dont touch
-#define QaI              (float)(QI/(PWM_FREQ/3.0f))      //Integrator scaling//                     
-#define DaI              (float)(DI/(PWM_FREQ/3.0f))      //Integrator scaling//  
-///End of Dont touch 
-
+#define DP            0.2f                                  //[-] P gain
+#define DI            50.0f                                 //[-] I gain
+#define CFG_CURR_FILT                0.12f
+#define CFG_CF_CURR_FILT             FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(CFG_CURR_FILT, 16))
+#endif
 
 #if defined (INTBRK_L_EN) || defined (EXTBRK_EN)
 
@@ -842,6 +829,7 @@
 #define ENCODER_Y                   //enable Y encoder to left motor
 //#define INTBRK_L_EN               //enable brake resistor control on PHASE A left side driver, do not disable if break reistor is connected 
 #define EXTBRK_EN                   // enable brake resistor control pin on left uart port, pick PA2 or PA3 below
+#define CFG_USE_BW_PI_CALC
 #ifdef EXTBRK_EN                         
 #define EXTBRK_USE_CH3              // PA2      
 //#define EXTBRK_USE_CH4            // PA3
@@ -868,18 +856,27 @@
 #endif
 
 #define BAT_CELLS               6       // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
-
-#define QP              0.6f                          //[-] P gain   
-#define QI              200.0f                                //[-] I gain
+#if defined(CFG_USE_BW_PI_CALC)
+/*
+ * D/Q current-loop PI tuning
+ * - Default: use manual QP/QI/DP/DI values.
+ * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
+ */
+#define CFG_TARGET_BANDWIDTH_HZ   300.0f   // [Hz] current-loop target bandwidth
+#define CFG_TARGET_BANDWIDTH_HZ_INT 300    // [Hz] integer mirror for compile-time checks
+#define CFG_MOTOR_L_H             0.0003f  // [H]  phase inductance
+#define CFG_MOTOR_R_OHM           0.3f    // [Ohm] phase resistance
+#define CFG_CURR_FILT_TARGET_MULT 3U    // [-] target multiplier for current filter cutoff frequency relative to bandwidth. Higher value == softer filter. Recommended: 3+.
+#else
+//Q axis control gains
+#define QP            0.3f                                  //[-] P gain
+#define QI            100.0f                                //[-] I gain
 //D axis control gains
-#define DP              0.3f                                   //[-] P gain   
-#define DI              100.0f                                 //[-] I gain
-
-
-///Dont touch
-#define QaI              (float)(QI/(PWM_FREQ/3.0f))      //Integrator scaling//                     
-#define DaI              (float)(DI/(PWM_FREQ/3.0f))      //Integrator scaling//  
-///End of Dont touch
+#define DP            0.2f                                  //[-] P gain
+#define DI            50.0f                                 //[-] I gain
+#define CFG_CURR_FILT                0.12f
+#define CFG_CF_CURR_FILT             FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(CFG_CURR_FILT, 16))
+#endif
 
   #define FLASH_WRITE_KEY        0x1012    // Flash memory writing key.
   #define CTRL_TYP_SEL           FOC_CTRL 
@@ -917,6 +914,64 @@
   //#define INVERT_L_DIRECTION
   //#define DEBUG_SERIAL_USART3         // left sensor cable debug
 #endif
+
+/* ===================== Finalize PI gains after all variant overrides ===================== */
+/* Current measurement low-pass filter coefficient: fixdt(0,16,16) */
+/*
+ * Auto formula:
+ *   VBUS = BAT_CELLS * 4.2
+ *   QP   = 2*pi*Bandwidth*L / VBUS
+ *   QI   = QP * R/L
+ */
+#if defined(CFG_USE_BW_PI_CALC)
+#define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
+#define CFG_PI_CONST_2PI          6.28318530717958647692f
+/* Compile-time lower-bound check: ensure the chosen multiplier yields >= 2x cutoff.
+ * Uses a Taylor approximation of the bilinear warp: (e^Y - 1)/(Y/2) ≈ 2*(1 + Y/2 + Y^2/6 + Y^3/24 + Y^4/120)
+ */
+#define CFG_PI_CONST               3.14159265f
+  /* CFG_TS is defined later; forward-declare a local Ts mirror for this check */
+#define CFG_WARP_TS                (1.0f / (float)PWM_FREQ)
+#define CFG_WARP_Y                 (4.0f * CFG_PI_CONST * CFG_TARGET_BANDWIDTH_HZ * CFG_WARP_TS)
+#define CFG_MIN_REQUIRED_MULT      (2.0f * (1.0f + \
+                                       (CFG_WARP_Y * 0.5f) + \
+                                       ((CFG_WARP_Y * CFG_WARP_Y) / 6.0f) + \
+                                       ((CFG_WARP_Y * CFG_WARP_Y * CFG_WARP_Y) / 24.0f) + \
+                                       ((CFG_WARP_Y * CFG_WARP_Y * CFG_WARP_Y * CFG_WARP_Y) / 120.0f)))
+_Static_assert((int)((float)CFG_CURR_FILT_TARGET_MULT * 1000.0f) >= (int)(CFG_MIN_REQUIRED_MULT * 1000.0f),
+               "BUILD ERROR: Filter multiplier too low; real cutoff would be < 2x control bandwidth.");
+
+  #undef QP
+  #undef QI
+  #undef DP
+  #undef DI
+  #undef CFG_CURR_FIL
+  #undef CFG_CF_CURR_FILT
+  #define QP            ((CFG_PI_CONST_2PI * CFG_TARGET_BANDWIDTH_HZ * CFG_MOTOR_L_H) / CFG_VBUS_V) // [-] P gain
+  #define QI            (QP * (CFG_MOTOR_R_OHM / CFG_MOTOR_L_H))                                     // [-] I gain
+  #define DP            QP                                                                             // [-] P gain
+  #define DI            QI                                                                             // [-] I gain
+  #define CFG_TS                       (1.0f / (float)PWM_FREQ)
+  #define CFG_CURR_FILT                (CFG_TS / (CFG_TS + (1.0f / (CFG_PI_CONST_2PI * (CFG_TARGET_BANDWIDTH_HZ * (float)CFG_CURR_FILT_TARGET_MULT)))))
+  //#define CFG_CURR_FILT_VERIFIED_HZ    ((-logf(1.0f - CFG_CURR_FILT)) / (CFG_PI_CONST_2PI * CFG_TS))
+  #define CFG_CF_CURR_FILT             FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(CFG_CURR_FILT, 16))
+#endif
+
+/* Final integrator scaling after all QI/DI overrides */
+#define QaI              (float)(QI/PWM_FREQ)      //Integrator scaling//
+#define DaI              (float)(DI/PWM_FREQ)      //Integrator scaling//
+
+/* Gain values pre-scaled for fixed-point model parameters (after variant overrides) */
+#define QP_FIXDT_12                  FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QP, 12))
+#define DP_FIXDT_12                  FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DP, 12))
+#define QaI_FIXDT_16                 FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QaI, 16))
+#define DaI_FIXDT_16                 FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DaI, 16))
+
+/* ===================== Finalize fixed-point gains after variant overrides ===================== */
+#define CFG_CF_IDKI                  DaI_FIXDT_16
+#define CFG_CF_IDKP                  DP_FIXDT_12
+#define CFG_CF_IQKI                  QaI_FIXDT_16
+#define CFG_CF_IQKP                  QP_FIXDT_12
 
 // ########################### UART SETIINGS ############################
 #if defined(FEEDBACK_SERIAL_USART2) || defined(CONTROL_SERIAL_USART2) || defined(DEBUG_SERIAL_USART2) || defined(SIDEBOARD_SERIAL_USART2) || \

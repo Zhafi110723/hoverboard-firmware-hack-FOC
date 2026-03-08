@@ -720,7 +720,7 @@
 //#define EXTBRK_USE_CH4            // PA3
 #endif
 
-#define BAT_CELLS               12      // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
+#define BAT_CELLS               6      // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
 #if defined(CFG_USE_BW_PI_CALC)
 /*
  * D/Q current-loop PI tuning

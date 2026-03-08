@@ -727,9 +727,9 @@
  * - Default: use manual QP/QI/DP/DI values.
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
-#define CFG_TARGET_BANDWIDTH_HZ   500.0f                 // [Hz] current-loop target bandwidth
-#define CFG_MOTOR_L_H             0.008f  // [H]  phase inductance
-#define CFG_MOTOR_R_OHM           5.0f    // [Ohm] phase resistance
+#define CFG_TARGET_BANDWIDTH_HZ   1000.0f                 // [Hz] current-loop target bandwidth
+#define CFG_MOTOR_L_H             0.000445f  // [H]  phase inductance
+#define CFG_MOTOR_R_OHM           0.5f    // [Ohm] phase resistance
 #else
 //Q axis control gains
 #define QP            0.3f                                  //[-] P gain

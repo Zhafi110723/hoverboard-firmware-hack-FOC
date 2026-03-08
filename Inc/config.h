@@ -958,6 +958,14 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
   #define CFG_CF_CURR_FILT             FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(CFG_CURR_FILT, 16))
 #endif
 
+/* Finalize current filter coefficient after all variant overrides */
+#ifndef CFG_CURR_FILT
+  #define CFG_CURR_FILT                0.12f
+#endif
+#ifndef CFG_CF_CURR_FILT
+  #define CFG_CF_CURR_FILT             FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(CFG_CURR_FILT, 16))
+#endif
+
 /* Final integrator scaling after all QI/DI overrides */
 #define QaI              (float)(QI/(PWM_FREQ))      //Integrator scaling//
 #define DaI              (float)(DI/(PWM_FREQ))      //Integrator scaling//

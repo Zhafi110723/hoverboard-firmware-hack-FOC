@@ -943,7 +943,6 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
   #undef DP
   #undef DI
   #undef CFG_CURR_FILT
-  #undef CFG_CF_CURR_FILT
 /*
  * Auto formula:
  *   VBUS = BAT_CELLS * 4.2

@@ -12,6 +12,8 @@ What it fixes (idempotent):
 - Ensures BLDC_controller_step() / BLDC_controller_initialize() define a local
     param pointer:
         P *rtP = ((P *) rtM->defaultParam);
+- Threads the per-instance `rtP` pointer through generated helper functions
+    that incorrectly reference global params after regeneration
 - Fixes accidental dot-access for parameter pointers: rtp.*/rtP.* -> rtp->*/rtP->*
 - Renames the generated default parameter struct in Src/BLDC_controller_data.c:
     P rtP -> P rtP_Left
@@ -164,45 +166,99 @@ def _patch_param_access(text: str) -> tuple[str, list[str]]:
     return new_text, details
 
 
-def _patch_foc_rtP_plumbing(text: str) -> tuple[str, list[str]]:
+def _patch_generated_rtP_plumbing(text: str) -> tuple[str, list[str]]:
     details: list[str] = []
 
-    if "rtP->" not in text or "void FOC(" not in text:
+    if "rtP->" not in text:
         return text, details
 
-    prototype_old = (
-        "                rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
-        "                rtu_b_cruiseCtrlEna, int16_T *rty_Vq, int16_T *rty_Vd, DW_FOC\n"
-        "                *localDW);"
-    )
-    prototype_new = (
-        "                rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
-        "                rtu_b_cruiseCtrlEna, const P *rtP, int16_T *rty_Vq, int16_T\n"
-        "                *rty_Vd, DW_FOC *localDW);"
-    )
-    if prototype_old in text and prototype_new not in text:
-        text = text.replace(prototype_old, prototype_new, 1)
-        details.append("updated FOC() prototype to accept rtP")
+    patterns: list[tuple[str, str, str]] = [
+        (
+            "updated F03_Control_Mode_Manager() prototype to accept rtP",
+            r"(extern\s+void\s+F03_Control_Mode_Manager\([\s\S]*?\*rty_r_inpTgtConv,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(DW_F03_Control_Mode_Manager\s*\*localDW\);)",
+            r"\1const P *rtP, \2",
+        ),
+        (
+            "updated F03_Control_Mode_Manager() definition to accept rtP",
+            r"(void\s+F03_Control_Mode_Manager\([\s\S]*?\*rty_r_inpTgtConv,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(DW_F03_Control_Mode_Manager\s*\*localDW\)\s*\{)",
+            r"\1const P *rtP, \2",
+        ),
+        (
+            "updated PI_clamp_fixdtFF() prototype to accept rtP",
+            r"(extern\s+int16_T\s+PI_clamp_fixdtFF\([\s\S]*?rtu_FeedForward,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(DW_PI_clamp_fixdtFF\s*\*localDW\);)",
+            r"\1const P *rtP, \2",
+        ),
+        (
+            "updated PI_clamp_fixdtFF() definition to accept rtP",
+            r"(int16_T\s+PI_clamp_fixdtFF\([\s\S]*?rtu_FeedForward,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(DW_PI_clamp_fixdtFF\s*\*localDW\)\s*\{)",
+            r"\1const P *rtP, \2",
+        ),
+        (
+            "updated PI_clamp_fixdtFF_c() prototype to accept rtP",
+            r"(extern\s+int16_T\s+PI_clamp_fixdtFF_c\([\s\S]*?rtu_FeedForward,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(DW_PI_clamp_fixdtFF_k\s*\*localDW\);)",
+            r"\1const P *rtP, \2",
+        ),
+        (
+            "updated PI_clamp_fixdtFF_c() definition to accept rtP",
+            r"(int16_T\s+PI_clamp_fixdtFF_c\([\s\S]*?rtu_FeedForward,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(DW_PI_clamp_fixdtFF_k\s*\*localDW\)\s*\{)",
+            r"\1const P *rtP, \2",
+        ),
+        (
+            "updated FOC() prototype to accept rtP",
+            r"(extern\s+void\s+FOC\([\s\S]*?rtu_b_cruiseCtrlEna,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(int16_T\s*\*rty_Vq,\s*int16_T\s*\*rty_Vd,\s*DW_FOC[\s\S]*?localDW\);)",
+            r"\1const P *rtP, \2",
+        ),
+        (
+            "updated FOC() definition to accept rtP",
+            r"(void\s+FOC\([\s\S]*?rtu_b_cruiseCtrlEna,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(int16_T\s*\*rty_Vq,\s*int16_T\s*\*rty_Vd,[\s\S]*?DW_FOC\s*\*localDW\)\s*\{)",
+            r"\1const P *rtP, \2",
+        ),
+    ]
 
-    definition_old = (
-        "         rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
-        "         rtu_b_cruiseCtrlEna, int16_T *rty_Vq, int16_T *rty_Vd, DW_FOC *localDW)"
-    )
-    definition_new = (
-        "         rtu_Vq_nLimProtMax, int16_T rtu_VqFinPrev, boolean_T\n"
-        "         rtu_b_cruiseCtrlEna, const P *rtP, int16_T *rty_Vq, int16_T *rty_Vd,\n"
-        "         DW_FOC *localDW)"
-    )
-    if definition_old in text and definition_new not in text:
-        text = text.replace(definition_old, definition_new, 1)
-        details.append("updated FOC() definition to accept rtP")
+    for detail, pattern, replacement in patterns:
+        new_text, count = re.subn(pattern, replacement, text, count=1, flags=re.MULTILINE)
+        if count:
+            text = new_text
+            details.append(detail)
 
-    old_call = "rtDW->UnitDelay4_DSTATE_a, rtP->b_cruiseCtrlEna, &rtDW->Merge,"
-    new_call = "rtDW->UnitDelay4_DSTATE_a, rtP->b_cruiseCtrlEna, rtP, &rtDW->Merge,"
-    if old_call in text:
-        count = text.count(old_call)
-        text = text.replace(old_call, new_call)
-        details.append(f"updated {count} FOC() call site(s) to forward rtP")
+    new_text, count = re.subn(
+        r"(rtu_b_cruiseCtrlEna,\s*)(?:const\s+P\s*\*\s*rtP,\s*)?(int16_T\s*\*rty_Vq,\s*int16_T\s*\*rty_Vd,\s*DW_FOC\s*\*localDW)",
+        r"\1const P *rtP, \2",
+        text,
+        flags=re.MULTILINE,
+    )
+    if count:
+        text = new_text
+        details.append(f"normalized FOC() parameter list(s) to include rtP ({count})")
+
+    call_patterns: list[tuple[str, str, str]] = [
+        (
+            "updated F03_Control_Mode_Manager() call site(s) to forward rtP",
+            r"(&rtb_Saturation,\s*)(?:rtP,\s*)?(&rtDW->F03_Control_Mode_Manager_f\))",
+            r"\1rtP, \2",
+        ),
+        (
+            "updated PI_clamp_fixdtFF_c() call site(s) to forward rtP",
+            r"(rtu_VqFinPrev,\s*rtb_Divide1_g,\s*rtb_Switch4_idx_1,\s*0,\s*rtb_Switch4_idx_0,\s*)(?:rtP,\s*)?(&localDW->PI_clamp_fixdtFF_ci\))",
+            r"\1rtP, \2",
+        ),
+        (
+            "updated PI_clamp_fixdtFF() call site(s) to forward rtP",
+            r"(rtu_Vd_max,\s*rtu_Vd_min,\s*0,\s*rtb_Divide1_g,\s*)(?:rtP,\s*)?(&localDW->PI_clamp_fixdtFF_a\))",
+            r"\1rtP, \2",
+        ),
+        (
+            "updated FOC() call site(s) to forward rtP",
+            r"(rtDW->UnitDelay4_DSTATE_a,\s*rtP->b_cruiseCtrlEna,\s*)(?:rtP,\s*)?(&rtDW->Merge,\s*&rtDW->Switch1,\s*&rtDW->FOC_h\))",
+            r"\1rtP, \2",
+        ),
+    ]
+
+    for detail, pattern, replacement in call_patterns:
+        new_text, count = re.subn(pattern, replacement, text, flags=re.MULTILINE)
+        if count:
+            text = new_text
+            details.append(f"{detail} ({count})")
 
     return text, details
 
@@ -242,7 +298,7 @@ def patch_file(path: Path) -> FileEdit:
         details += d
         text, d = _patch_param_access(text)
         details += d
-        text, d = _patch_foc_rtP_plumbing(text)
+        text, d = _patch_generated_rtP_plumbing(text)
         details += d
 
     elif path.name == "BLDC_controller_data.c":

@@ -103,7 +103,6 @@ static int32_t offsetSumDcr = 0;
 int16_t unf_VBUS;
 extern int16_t batVoltageCalib;
 
-int32_t emulated_mech_angle_deg = 0; // For encoder simulation during alignment
 
 uint8_t BLDC_CurrentOffsetCalDone(void) {
   // Export calibration completion so main-loop alignment can wait for valid current offsets.
@@ -141,10 +140,10 @@ void DMA1_Channel1_IRQHandler(void) {
     offsetcount++;
     if (offsetcount == CURRENT_SENSE_OFFSET_CAL_SAMPLES) {
       // Final exact-average ADC offsets; +3 keeps measured DC-link current centered on this hardware.
-      offsetrlA = (int16_t)(offsetSumRlA / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 4;
-      offsetrlB = (int16_t)(offsetSumRlB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 4;
-      offsetrrB = (int16_t)(offsetSumRrB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 4;
-      offsetrrC = (int16_t)(offsetSumRrC / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 4;
+      offsetrlA = (int16_t)(offsetSumRlA / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
+      offsetrlB = (int16_t)(offsetSumRlB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
+      offsetrrB = (int16_t)(offsetSumRrB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
+      offsetrrC = (int16_t)(offsetSumRrC / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
       offsetdcl = (int16_t)(offsetSumDcl / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 4;
       offsetdcr = (int16_t)(offsetSumDcr / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 4;
     }
@@ -234,7 +233,7 @@ void DMA1_Channel1_IRQHandler(void) {
 
   // Adjust pwm_margin depending on the selected Control Type
   if (rtP_Left.z_ctrlTypSel == FOC_CTRL) {
-    pwm_margin = 110;
+    pwm_margin = 59;
   } else {
     pwm_margin = 0;
   }
@@ -283,14 +282,11 @@ void DMA1_Channel1_IRQHandler(void) {
       rtU_Left.r_inpTgt = pwml;
     } else {
       rtU_Left.r_inpTgt = encoder_y.align_inpTgt;
-       rtU_Left.a_mechAngle = (encoder_y.emulated_mech_count * 23040) / (uint32_t)ENCODER_Y_CPR;
-       
+      rtU_Left.a_encoderCNT = encoder_y.emulated_mech_count;
     }
-    if (encoder_y.ali){
-    encoder_y.aligned_count = encoder_y_handle.Instance->CNT;
-    rtU_Left.a_mechAngle = (encoder_y.aligned_count * 23040) / (uint32_t)ENCODER_Y_CPR;
-    // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
-    } 
+    if (encoder_y.ali) {
+      rtU_Left.a_encoderCNT = encoder_y_handle.Instance->CNT;
+    }
     #else
     rtU_Left.r_inpTgt = pwml;
     #endif
@@ -303,18 +299,18 @@ void DMA1_Channel1_IRQHandler(void) {
 
     #ifndef INTBRK_L_EN
     /* Get motor outputs here */
-    ul            = rtY_Left.DC_phaA;
-    vl            = rtY_Left.DC_phaB;
-    wl            = rtY_Left.DC_phaC;
+    ul            = (uint16_t)CLAMP(rtY_Left.DC_phaA + pwm_res / 2 - pwm_margin, 0, pwm_res-pwm_margin);
+    vl            = (uint16_t)CLAMP(rtY_Left.DC_phaB + pwm_res / 2 - pwm_margin, 0, pwm_res-pwm_margin);
+    wl            = (uint16_t)CLAMP(rtY_Left.DC_phaC + pwm_res / 2 - pwm_margin, 0, pwm_res-pwm_margin);
   // errCodeLeft  = rtY_Left.z_errCode;
   // motSpeedLeft = rtY_Left.n_mot;
   // motAngleLeft = rtY_Left.a_elecAngle;
 
     /* Apply commands */
     
-    LEFT_TIM->LEFT_TIM_U    = (uint16_t)CLAMP(ul + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
-    LEFT_TIM->LEFT_TIM_V    = (uint16_t)CLAMP(vl + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
-    LEFT_TIM->LEFT_TIM_W    = (uint16_t)CLAMP(wl + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
+    LEFT_TIM->LEFT_TIM_U    = ul;
+    LEFT_TIM->LEFT_TIM_V    = vl;
+    LEFT_TIM->LEFT_TIM_W    = wl;
     #else
     // INTBRK: ON threshold uses BRKRESACT_SENS, OFF threshold uses MAX_REGEN_CURRENT.
     int16_t regenCur = curR_DC - MAX_REGEN_CURRENT;
@@ -397,12 +393,10 @@ void DMA1_Channel1_IRQHandler(void) {
 
     } else {
       rtU_Right.r_inpTgt = encoder_x.align_inpTgt;
-       emulated_mech_angle_deg = (encoder_x.emulated_mech_count * 23040) / (uint32_t)ENCODER_X_CPR;
-      rtU_Right.a_mechAngle = emulated_mech_angle_deg;
+      rtU_Right.a_encoderCNT = encoder_x.emulated_mech_count;
     }
     if (encoder_x.ali){
-    encoder_x.aligned_count = encoder_x_handle.Instance->CNT;
-    rtU_Right.a_mechAngle = (encoder_x.aligned_count * 23040) / (uint32_t)ENCODER_X_CPR;
+    rtU_Right.a_encoderCNT = encoder_x_handle.Instance->CNT;
     } 
     #else
   rtU_Right.r_inpTgt = pwmr;
@@ -414,9 +408,9 @@ void DMA1_Channel1_IRQHandler(void) {
     #endif
 
     /* Get motor outputs here */
-    ur            = (uint16_t)CLAMP(rtY_Right.DC_phaA + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
-    vr            = (uint16_t)CLAMP(rtY_Right.DC_phaB + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
-    wr            = (uint16_t)CLAMP(rtY_Right.DC_phaC + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
+    ur            = (uint16_t)CLAMP(rtY_Right.DC_phaA + pwm_res / 2 - pwm_margin, 0, pwm_res-pwm_margin);
+    vr            = (uint16_t)CLAMP(rtY_Right.DC_phaB + pwm_res / 2 - pwm_margin, 0, pwm_res-pwm_margin);
+    wr            = (uint16_t)CLAMP(rtY_Right.DC_phaC + pwm_res / 2 - pwm_margin, 0, pwm_res-pwm_margin);
  // errCodeRight  = rtY_Right.z_errCode;
  // motSpeedRight = rtY_Right.n_mot;
  // motAngleRight = rtY_Right.a_elecAngle;

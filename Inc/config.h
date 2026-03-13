@@ -185,7 +185,7 @@
 #define DCR_HIGH_COUNTS  (2000 + (I_DCR_POS * A2BIT_CONV))  // compile-time right high threshold in ADC counts (nominal offset 2000)
 #define DCR_LOW_COUNTS   (2000 - (I_DCR_NEG * A2BIT_CONV))  // compile-time right low threshold in ADC counts (nominal offset 2000)
 #define N_MOT_MAX       1000             // [rpm] Maximum motor speed limit
-#define N_POLE_PAIRS    6                //[PP] Number of motor pole pairs: 15 for standard Hoverboard motors
+#define N_POLE_PAIRS    15                //[PP] Number of motor pole pairs: 15 for standard Hoverboard motors
 
 // Field Weakening / Phase Advance
 #define FIELD_WEAK_ENA  0               // [-] Field Weakening / Phase Advance enable flag: 0 = Disabled (default), 1 = Enabled
@@ -209,6 +209,7 @@
 #define FIXDT_ROUND_TO_INT(x)        ((int32_t)(((x) >= 0.0f) ? ((x) + 0.5f) : ((x) - 0.5f)))
 #define FIXDT_FROM_FLOAT(x, frac)    FIXDT_ROUND_TO_INT((x) * (float)(1U << (frac)))
 #define FIXDT_CLAMP_U16(x)           ((uint16_t)(((x) < 0) ? 0 : (((x) > 65535) ? 65535 : (x))))
+#define FIXDT_CLAMP_S16(x)           ((int16_t)(((x) < -32768) ? -32768 : (((x) > 32767) ? 32767 : (x))))
 
 //#define BEEPER_OFF
 //#define ENCODER_X
@@ -344,8 +345,8 @@
     // #define SIDEBOARD_SERIAL_USART3 1
     #define CONTROL_SERIAL_USART3 1       // right sensor board cable. Number indicates priority for dual-input. Disable if I2C (nunchuk or lcd) is used! For Arduino control check the hoverSerial.ino
     #define FEEDBACK_SERIAL_USART3        // right sensor board cable, disable if I2C (nunchuk or lcd) is used!
-    #define AUX_INPUT1          3, -1000, 0, 1000, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT2          3, -1000, 0, 1000, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT1          3, -32767, 0, 32767, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT2          3, -32767, 0, 32767, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #else
     #define FLASH_WRITE_KEY     0x1001    // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
     #define DEBUG_SERIAL_USART3           // right sensor board cable, disable if I2C (nunchuk or lcd) is used!
@@ -371,14 +372,14 @@
   // #define FEEDBACK_SERIAL_USART3      // right sensor board cable, disable if I2C (nunchuk or lcd) is used!
  
   // #define DUAL_INPUTS                 //  UART*(Primary) + SIDEBOARD(Auxiliary). Uncomment this to use Dual-inputs
-  #define PRI_INPUT1             3, -1000, 0, 1000, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-  #define PRI_INPUT2             3, -1000, 0, 1000, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define PRI_INPUT1             3, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define PRI_INPUT2             3, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #ifdef DUAL_INPUTS
     #define FLASH_WRITE_KEY      0x1102  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
     // #define SIDEBOARD_SERIAL_USART2 1   // left sideboard
     #define SIDEBOARD_SERIAL_USART3 1   // right sideboard
-    #define AUX_INPUT1           3, -1000, 0, 1000, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT2           3, -1000, 0, 1000, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT1           3, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT2           3, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #else
     #define FLASH_WRITE_KEY      0x1002  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
   #endif
@@ -402,15 +403,15 @@
   #define CONTROL_NUNCHUK         0       // use nunchuk as input. Number indicates priority for dual-input. Disable FEEDBACK_SERIAL_USART3, DEBUG_SERIAL_USART3!
 
   // #define DUAL_INPUTS                     // Nunchuk*(Primary) + UART(Auxiliary). Uncomment this to use Dual-inputs
-  #define PRI_INPUT1              2, -1024, 0, 1024, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-  #define PRI_INPUT2              2, -1024, 0, 1024, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define PRI_INPUT1              2, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define PRI_INPUT2              2, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #ifdef DUAL_INPUTS
     #define FLASH_WRITE_KEY       0x1103  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
     // #define SIDEBOARD_SERIAL_USART2 1
     #define CONTROL_SERIAL_USART2 1       // left sensor board cable, disable if ADC or PPM is used! For Arduino control check the hoverSerial.ino
     #define FEEDBACK_SERIAL_USART2        // left sensor board cable, disable if ADC or PPM is used!
-    #define AUX_INPUT1            3, -1000, 0, 1000, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT2            3, -1000, 0, 1000, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT1            3, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT2            3, -32767, 0, 32767, 0     // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #else
     #define FLASH_WRITE_KEY       0x1003  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
     #define DEBUG_SERIAL_USART2           // left sensor cable debug
@@ -439,14 +440,14 @@
     #define CONTROL_PPM_RIGHT     1       // use PPM-Sum as input on the RIGHT cable. Number indicates priority for dual-input. Disable CONTROL_SERIAL_USART3!
     #define PRI_INPUT1            3,     0, 0, 4095,   0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
     #define PRI_INPUT2            3,     0, 0, 4095,   0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT1            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT2            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT1            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT2            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #else
     #define FLASH_WRITE_KEY       0x1004  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
     // #define CONTROL_PPM_LEFT      0       // use PPM-Sum as input on the LEFT cable. Number indicates priority for dual-input. Disable CONTROL_SERIAL_USART2!
     #define CONTROL_PPM_RIGHT     0       // use PPM-Sum as input on the RIGHT cable. Number indicates priority for dual-input. Disable CONTROL_SERIAL_USART3!
-    #define PRI_INPUT1            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define PRI_INPUT2            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define PRI_INPUT1            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define PRI_INPUT2            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #endif
   #define PPM_NUM_CHANNELS        6       // total number of PPM channels to receive, even if they are not used.
 
@@ -477,14 +478,14 @@
     #define RC_PWM_RIGHT     1       // use RC PWM as input on the RIGHT cable. Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART3!
     #define PRI_INPUT1            3,     0, 0, 4095,   0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
     #define PRI_INPUT2            3,     0, 0, 4095,   0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT1            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT2            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT1            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT2            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #else
     #define FLASH_WRITE_KEY       0x1005  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
     // #define RC_PWM_LEFT      0       // use RC PWM as input on the LEFT cable. Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART2!
     #define RC_PWM_RIGHT     0       // use RC PWM as input on the RIGHT cable. Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART3!
-    #define PRI_INPUT1            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define PRI_INPUT2            3, -1000, 0, 1000, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define PRI_INPUT1            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define PRI_INPUT2            3, -32767, 0, 32767, 100  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #endif
 
   #define FILTER                  6553    // 0.1f [-] fixdt(0,16,16) lower value == softer filter [0, 65535] = [0.0 - 1.0].
@@ -525,14 +526,14 @@
     #define FEEDBACK_SERIAL_USART3        // right sensor board cable, disable if ADC or PPM is used!
     #define PRI_INPUT1            3,     0, 0, 4095, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
     #define PRI_INPUT2            3,     0, 0, 4095, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT1            3, -1000, 0, 1000, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define AUX_INPUT2            3, -1000, 0, 1000, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT1            3, -32767, 0, 32767, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define AUX_INPUT2            3, -32767, 0, 32767, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #else
     #define FLASH_WRITE_KEY       0x1006  // Flash memory writing key. Change this key to ignore the input calibrations from the flash memory and use the ones in config.h
     #define CONTROL_SERIAL_USART3 0       // use RC iBUS input on the RIGHT cable, disable if ADC or PPM is used!
     #define FEEDBACK_SERIAL_USART3        // right sensor board cable, disable if ADC or PPM is used!
-    #define PRI_INPUT1            3, -1000, 0, 1000, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-    #define PRI_INPUT2            3, -1000, 0, 1000, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define PRI_INPUT1            3, -32767, 0, 32767, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+    #define PRI_INPUT2            3, -32767, 0, 32767, 0  // TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #endif
 
   // #define TANK_STEERING                // use for tank steering, each input controls each wheel 
@@ -559,8 +560,8 @@
   #define DUAL_INPUTS                       // ADC*(Primary) + Sideboard_R(Auxiliary). Uncomment this to use Dual-inputs
   #define PRI_INPUT1              1,  1000, 0, 2500, 0  // Pedal Brake        TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #define PRI_INPUT2              1,   500, 0, 2200, 0  // Pedal Accel        TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-  #define AUX_INPUT1              2, -1000, 0, 1000, 0  // Sideboard Steer    TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-  #define AUX_INPUT2              2, -1000, 0, 1000, 0  // Sideboard Speed    TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define AUX_INPUT1              2, -32767, 0, 32767, 0  // Sideboard Steer    TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define AUX_INPUT2              2, -32767, 0, 32767, 0  // Sideboard Speed    TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
 
   #define SPEED_COEFFICIENT       16384     // 1.0f
   #define STEER_COEFFICIENT       8192      // 0.5f Only active in Sideboard input
@@ -620,10 +621,10 @@
 
   // If an iBUS RC receiver is connected to either Left Sideboard (AUX_INPUT) or Right Sideboard (PRI_INPUT)
   // PRIMARY INPUT:          TYPE, MIN, MID, MAX, DEADBAND /* TYPE: 0:Disabled, 1:Normal Pot, 2:Middle Resting Pot, 3:Auto-detect */
-  #define PRI_INPUT1          3, -1000, 0, 1000, 0  // Priority Sideboard can be used to send commands via an iBUS Receiver connected to the sideboard
-  #define PRI_INPUT2          3, -1000, 0, 1000, 0  // Priority Sideboard can be used to send commands via an iBUS Receiver connected to the sideboard
-  #define AUX_INPUT1          3, -1000, 0, 1000, 0  // not used
-  #define AUX_INPUT2          3, -1000, 0, 1000, 0  // not used
+  #define PRI_INPUT1          3, -32767, 0, 32767, 0  // Priority Sideboard can be used to send commands via an iBUS Receiver connected to the sideboard
+  #define PRI_INPUT2          3, -32767, 0, 32767, 0  // Priority Sideboard can be used to send commands via an iBUS Receiver connected to the sideboard
+  #define AUX_INPUT1          3, -32767, 0, 32767, 0  // not used
+  #define AUX_INPUT2          3, -32767, 0, 32767, 0  // not used
 #endif
 // ######################## END OF VARIANT_HOVERBOARD SETTINGS #########################
 
@@ -644,8 +645,8 @@
   #define STEER_COEFFICIENT   8192      // 0.5f - higher value == stronger. if you do not want any steering, set it to 0.0; 0.0 to 1.0
   #define INVERT_R_DIRECTION            // Invert right motor
   #define INVERT_L_DIRECTION            // Invert left motor
-  #define PRI_INPUT1          2, -1000, 0, 1000, 0  // dummy input, TRANSPOTTER does not use input limitations
-  #define PRI_INPUT2          2, -1000, 0, 1000, 0  // dummy input, TRANSPOTTER does not use input limitations
+  #define PRI_INPUT1          2, -32767, 0, 32767, 0  // dummy input, TRANSPOTTER does not use input limitations
+  #define PRI_INPUT2          2, -32767, 0, 32767, 0  // dummy input, TRANSPOTTER does not use input limitations
 #endif
 // ############################# END OF VARIANT_TRANSPOTTER SETTINGS ########################
 
@@ -662,8 +663,8 @@
   // #define RC_PWM_LEFT    0         // use RC PWM as input on the LEFT cable. Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART2!
   #define RC_PWM_RIGHT   0         // use RC PWM as input on the RIGHT cable.  Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART3!
 
-  #define PRI_INPUT1          0, -1000, 0, 1000,   0    // Disabled. TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
-  #define PRI_INPUT2          2,  -800, 0,  700, 100    // Active.   TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define PRI_INPUT1          0, -32767, 0, 32767,   0    // Disabled. TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
+  #define PRI_INPUT2          2, -32767, 0, 32767, 100    // Active.   TYPE, MIN, MID, MAX, DEADBAND. See INPUT FORMAT section
   #define INPUT_BRK           -400      // (-1000 - 0) Change this value to adjust the braking amount
 
   #define FILTER              6553      // 0.1f [-] fixdt(0,16,16) lower value == softer filter [0, 65535] = [0.0 - 1.0].
@@ -728,8 +729,8 @@
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
 #define CFG_TARGET_BANDWIDTH_HZ   1000.0f                 // [Hz] current-loop target bandwidth
-#define CFG_MOTOR_L_H             0.000445f  // [H]  phase inductance
-#define CFG_MOTOR_R_OHM           0.5f    // [Ohm] phase resistance
+#define CFG_MOTOR_L_H             0.0004f  // [H] phase-to-neutral inductance (one phase)
+#define CFG_MOTOR_R_OHM           0.3f    // [Ohm] phase-to-neutral resistance (one phase)
 #else
 //Q axis control gains
 #define QP            0.3f                                  //[-] P gain
@@ -751,13 +752,15 @@
  //#define BRK_OVERVOLTAGE_RAMP_END   (BAT_CELLS * 440) // [V*100] Voltage fallback reaches full extra duty ramp (default 4.40 V/cell) (EXPERIMENTAL,  NEEDS FINE TUNING!)
 
 #endif  
-
+#define  ENCODER_IC_FILTER       6
 #if defined ENCODER_X
-#define ENCODER_X_PPR              16384    // Pulses per revolution
+#define ENCODER_CPR              65535                 //Enter your ENCODER CPR here
+#define ENCODER_X_PPR            (ENCODER_CPR+1)/4     // Pulses per revolution
 #define ALIGNMENT_X_POWER        3276      // [-] Voltage used for sensor alignment. [-16000, 16000]
 #endif
 #if defined ENCODER_Y
-#define ENCODER_Y_PPR            2048        // Pulses per revolution 
+#define ENCODER_CPR              65535                //Enter your ENCODER CPR here
+#define ENCODER_Y_PPR            (ENCODER_CPR+1)/4    // Pulses per revolution 
 #define ALIGNMENT_Y_POWER        3276        // [-] Voltage used for sensor alignment. [-16000, 16000]
 #endif
 
@@ -780,17 +783,17 @@
 
 #define DC_LINK_WATCHDOG_ENABLE               //Disables the motor without warning incase of under or overvoltage, disable if using hoverboard as vehicle
 #define FIELD_WEAK_ENA           0         //0 for disabled
-//#define RC_PWM_RIGHT           0         // Use RC PWM as input on the RIGHT cable. (duty cycle mapped to 0 to -1000, 0, 1000) Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART3!
+//#define RC_PWM_RIGHT           0         // Use RC PWM as input on the RIGHT cable. (duty cycle mapped to 0 to -32767, 0, 32767) Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART3!
 #define HW_PWM                   0         // Set to 0 or 1 depending on which motor you want to control also Use hw pwm pin PB5 on left side L_MTR_HALL_PHA  or could also be L_MTR_HALL_PHC 
 //#define CONTROL_ADC            1         // use ADC as input pn pins PA2 and PA3, cant be used with extbrk on PA2/PA3  
-//#define SW_PWM_RIGHT           0         // Use PWM input capture on PB10 and PB11 (duty cycle mapped to 0 to -16000, 0, 16000)
-//#define SW_PWM_LEFT            1         // Use PWM input capture on PA2 and PA3 (duty cycle mapped to 0 to -16000, 0, 16000)   (cant be use with extbrk on PA2/PA3)
+//#define SW_PWM_RIGHT           0         // Use PWM input capture on PB10 and PB11 (duty cycle mapped to 0 to -32767, 0, 32767)
+//#define SW_PWM_LEFT            1         // Use PWM input capture on PA2 and PA3 (duty cycle mapped to 0 to -32767, 0, 32767)   (cant be use with extbrk on PA2/PA3)
 //#define CONTROL_PPM_LEFT       0         // use PPM-Sum as input on the LEFT cable. Number indicates priority for dual-input. Disable DEBUG_SERIAL_USART2!
 //#define PPM_NUM_CHANNELS       1         // total number of PPM channels to receive, even if they are not used.
 //#define CONTROL_SERIAL_USART3  0         // left sensor board cable, disable if ADC or PPM is used! For Arduino control check the hoverSerial.ino
 //#define FEEDBACK_SERIAL_USART3           // left sensor board cable, disable if ADC or PPM is used!
-  #define PRI_INPUT1             0, -16000, 0, 16000,   0    //change depending on input type (may be -1000, 0, 1000 or -16000, 0, 16000)
-  #define PRI_INPUT2             2, -16000, 0, 16000,   0    //change depending on input type (may be -1000, 0, 1000 or -16000, 0, 16000)
+  #define PRI_INPUT1             0, -32767, 0, 32767,   0    //change depending on input type (may be -32767, 0, 32767)
+  #define PRI_INPUT2             2, -32767, 0, 32767,   0    //change depending on input type (may be -32767, 0, 32767)
   #define RATE                   32767     //leave to max rate 32767 if you want instant response  (may be needed if you need slower response)                  
   #define FILTER                 65535     //leave to max filter 65535 if you want instant response (may be needed if input is noisy)
   //#define INVERT_R_DIRECTION             //invert right motor direction
@@ -861,8 +864,8 @@
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
 #define CFG_TARGET_BANDWIDTH_HZ   300.0f                 // [Hz] current-loop target bandwidth
-#define CFG_MOTOR_L_H             0.0003f  // [H]  phase inductance
-#define CFG_MOTOR_R_OHM           0.3f    // [Ohm] phase resistance
+#define CFG_MOTOR_L_H             0.0003f  // [H] phase-to-neutral inductance (one phase)
+#define CFG_MOTOR_R_OHM           0.3f    // [Ohm] phase-to-neutral resistance (one phase)
 #define CFG_CURR_FILT_TARGET_MULT 3U    // [-] target multiplier for current filter cutoff frequency relative to bandwidth. Higher value == softer filter. Recommended: 3+.
 #else
 //Q axis control gains
@@ -900,8 +903,8 @@
 //#define PPM_NUM_CHANNELS       1         // total number of PPM channels to receive, even if they are not used.
 //#define CONTROL_SERIAL_USART3  0         //  disable if right uart port is used for sw pwm input capture
 //#define FEEDBACK_SERIAL_USART3           //  disable if right uart port is used for sw pwm input capture
-  #define PRI_INPUT1             0, -16000, 0, 16000,   0   //left motor change depending on input type (may be -1000, 0, 1000 or -16000, 0, 16000)
-  #define PRI_INPUT2             2, -16000, 0, 16000,   0   //right motor change depending on input type (may be -1000, 0, 1000 or -16000, 0, 16000)
+  #define PRI_INPUT1             0, -32767, 0, 32767,   0   //left motor change depending on input type (may be -32767, 0, 32767)
+  #define PRI_INPUT2             2, -32767, 0, 32767,   0   //right motor change depending on input type (may be -32767, 0, 32767)
 
   #undef RATE
   #undef FILTER 
@@ -911,12 +914,18 @@
   //#define INVERT_L_DIRECTION
   //#define DEBUG_SERIAL_USART3         // left sensor cable debug
 #endif
-
+/* ===================== Setting up Encoder ===================== */
+#ifdef ENCODER_CPR
+#define FRAC_CPR ((uint32_t)((1ULL << 32) / (ENCODER_CPR)))
+#endif
 /* ===================== Finalize PI gains after all variant overrides ===================== */
+#ifndef CFG_VBUS_V
+#define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
+#endif
+
 #if defined(CFG_USE_BW_PI_CALC)
 #define CFG_CURR_FILT_TARGET_MULT  3U  // [-] EXACT target REAL multiplier for current filter cutoff frequency. Recommended: 3+.
 #define CFG_TARGET_BANDWIDTH_HZ_INT ((int)(CFG_TARGET_BANDWIDTH_HZ + 0.5f)) // [Hz] integer mirror derived from bandwidth
-#define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
 #define CFG_PI_CONST_2PI          6.28318530717958647692f
 #define CFG_PI_CONST              3.14159265f
 #define CFG_TS                     (1.0f / (float)PWM_FREQ)
@@ -981,6 +990,16 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
 #define CFG_CF_IDKP                  DP_FIXDT_12
 #define CFG_CF_IQKI                  QaI_FIXDT_16
 #define CFG_CF_IQKP                  QP_FIXDT_12
+
+/* ===================== Setting up FeedForward Gain ===================== */
+#if defined(GD32F103Rx)
+  #define Vd_max_margin         1627.0f
+#else
+  #define Vd_max_margin         880.0f
+#endif
+
+#define FF_GAIN_REAL                 ((QP * ((CFG_MOTOR_R_OHM / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))) - 1.0f)
+#define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
 
 // ########################### UART SETIINGS ############################
 #if defined(FEEDBACK_SERIAL_USART2) || defined(CONTROL_SERIAL_USART2) || defined(DEBUG_SERIAL_USART2) || defined(SIDEBOARD_SERIAL_USART2) || \

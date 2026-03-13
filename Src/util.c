@@ -486,7 +486,10 @@ void BLDC_Init(void) {
   rtP_Left.cf_iqKi              = CFG_CF_IQKI;
   rtP_Left.cf_iqKp              = CFG_CF_IQKP;
   rtP_Left.cf_currFilt          = CFG_CF_CURR_FILT;
-
+  rtP_Left.a_cpr                = ENCODER_CPR; 
+  rtP_Left.a_fcpr               = FRAC_CPR; 
+  rtP_Left.ff_gain              = FF_GAIN;
+  
   rtP_Right                     = rtP_Left;     // Copy the Left motor parameters to the Right motor parameters
   rtP_Right.z_selPhaCurMeasABC  = 1;            // Right motor measured current phases {Green, Blue} = {iA, iB} -> do NOT change
 
@@ -679,12 +682,12 @@ static void Encoder_X_ApplyDirection(boolean_T forward_dir) {
   encoder_config.IC1Polarity = TIM_ICPOLARITY_RISING;
   encoder_config.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   encoder_config.IC1Prescaler = TIM_ICPSC_DIV1;
-  encoder_config.IC1Filter = 0;
+  encoder_config.IC1Filter = ENCODER_IC_FILTER;
 
   encoder_config.IC2Polarity = forward_dir ? TIM_ICPOLARITY_RISING : TIM_ICPOLARITY_FALLING;
   encoder_config.IC2Selection = TIM_ICSELECTION_DIRECTTI;
   encoder_config.IC2Prescaler = TIM_ICPSC_DIV1;
-  encoder_config.IC2Filter = 0;
+  encoder_config.IC2Filter = ENCODER_IC_FILTER;
 
   HAL_TIM_Encoder_Stop(&encoder_x_handle, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Init(&encoder_x_handle, &encoder_config);
@@ -721,12 +724,12 @@ void Encoder_X_Init(void) {
     encoder_config.IC1Polarity = TIM_ICPOLARITY_RISING;
     encoder_config.IC1Selection = TIM_ICSELECTION_DIRECTTI;
     encoder_config.IC1Prescaler = TIM_ICPSC_DIV1;
-    encoder_config.IC1Filter = 0;
+    encoder_config.IC1Filter = ENCODER_IC_FILTER;
 
     encoder_config.IC2Polarity = TIM_ICPOLARITY_RISING;
     encoder_config.IC2Selection = TIM_ICSELECTION_DIRECTTI;
     encoder_config.IC2Prescaler = TIM_ICPSC_DIV1;
-    encoder_config.IC2Filter = 0;
+    encoder_config.IC2Filter = ENCODER_IC_FILTER;
 
   encoder_x_handle.Instance = ENCODER_X_TIMER;
 
@@ -949,12 +952,12 @@ static void Encoder_Y_ApplyDirection(boolean_T forward_dir) {
   encoder_config.IC1Polarity = TIM_ICPOLARITY_RISING;
   encoder_config.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   encoder_config.IC1Prescaler = TIM_ICPSC_DIV1;
-  encoder_config.IC1Filter = 0;
+  encoder_config.IC1Filter = ENCODER_IC_FILTER;
 
   encoder_config.IC2Polarity = forward_dir ? TIM_ICPOLARITY_RISING : TIM_ICPOLARITY_FALLING;
   encoder_config.IC2Selection = TIM_ICSELECTION_DIRECTTI;
   encoder_config.IC2Prescaler = TIM_ICPSC_DIV1;
-  encoder_config.IC2Filter = 0;
+  encoder_config.IC2Filter = ENCODER_IC_FILTER;
 
   HAL_TIM_Encoder_Stop(&encoder_y_handle, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Init(&encoder_y_handle, &encoder_config);
@@ -991,12 +994,12 @@ void Encoder_Y_Init(void) {
     encoder_config.IC1Polarity = TIM_ICPOLARITY_RISING;
     encoder_config.IC1Selection = TIM_ICSELECTION_DIRECTTI;
     encoder_config.IC1Prescaler = TIM_ICPSC_DIV1;
-    encoder_config.IC1Filter = 0;
+    encoder_config.IC1Filter = ENCODER_IC_FILTER;
 
     encoder_config.IC2Polarity = TIM_ICPOLARITY_RISING;
     encoder_config.IC2Selection = TIM_ICSELECTION_DIRECTTI;
     encoder_config.IC2Prescaler = TIM_ICPSC_DIV1;
-    encoder_config.IC2Filter = 0;
+    encoder_config.IC2Filter = ENCODER_IC_FILTER;
 
   encoder_y_handle.Instance = ENCODER_Y_TIMER;
 

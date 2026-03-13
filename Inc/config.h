@@ -923,6 +923,14 @@
 #define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
 #endif
 
+/* Ensure motor parameters exist even when CFG_USE_BW_PI_CALC is disabled */
+#ifndef CFG_MOTOR_R_OHM
+  #define CFG_MOTOR_R_OHM          0.3f
+#endif
+#ifndef CFG_MOTOR_L_H
+  #define CFG_MOTOR_L_H            0.0004f
+#endif
+
 #if defined(CFG_USE_BW_PI_CALC)
 #define CFG_CURR_FILT_TARGET_MULT  3U  // [-] EXACT target REAL multiplier for current filter cutoff frequency. Recommended: 3+.
 #define CFG_TARGET_BANDWIDTH_HZ_INT ((int)(CFG_TARGET_BANDWIDTH_HZ + 0.5f)) // [Hz] integer mirror derived from bandwidth

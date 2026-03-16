@@ -728,7 +728,7 @@
  * - Default: use manual QP/QI/DP/DI values.
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
-#define CFG_TARGET_BANDWIDTH_HZ   1000.0f                 // [Hz] current-loop target bandwidth
+#define CFG_TARGET_BANDWIDTH_HZ   1200.0f                 // [Hz] current-loop target bandwidth
 #define CFG_MOTOR_L_H             0.0004f  // [H] phase-to-neutral inductance (one phase)
 #define CFG_MOTOR_R_OHM           0.3f    // [Ohm] phase-to-neutral resistance (one phase)
 #else
@@ -745,7 +745,7 @@
 #if defined (INTBRK_L_EN) || defined (EXTBRK_EN)
 
  //#define BRK_VOLTAGE_RAMP_ENABLED          // Uncomment to enable voltage-based brake resistor fallback ramp (EXPERIMENTAL, USE WITH CAUTION!)(BRAKE COULD GET VERY HOT AND DAMAGE IF VOLTAGE NOT PROPERLY TUNED!)
-  #define BRAKE_RESISTANCE 500                // [Ohm]3ohm X100 Value of the braking resistor. Set it to your own brake resistor resistance, increase the resistance here a bit for example I use 2.2ohm but I set to 3ohm here to be safe. 
+  #define BRAKE_RESISTANCE 600                // [Ohm]3ohm X100 Value of the braking resistor. Set it to your own brake resistor resistance, increase the resistance here a bit for example I use 2.2ohm but I set to 3ohm here to be safe. 
   #define BRKRESACT_SENS    0 / 20           //[A]40mA  Brake resistor activation sensitivity. Set same as MAX_REGEN_CURRENT if using battery. If using psu set low enough to not trip reverse current protection.
   #define MAX_REGEN_CURRENT 0 / 20            // [A]0mA  Maximum regenerative current that can be dissipated in the PSU or BATTERY. Set in 20mA steps 0, 20, 40, 60, 80, 100 etc. Set 0 for PSU!
  //#define BRK_OVERVOLTAGE_RAMP_START (BAT_CELLS * 429) // [V*100] Voltage fallback starts adding brake duty (default 4.30 V/cell) (EXPERIMENTAL, NEEDS FINE TUNING!)
@@ -1006,7 +1006,7 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
   #define Vd_max_margin         880.0f
 #endif
 
-#define FF_GAIN_REAL                 ((QP * ((CFG_MOTOR_R_OHM / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))) - 1.0f)
+#define FF_GAIN_REAL                 ((((CFG_MOTOR_R_OHM / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))
 #define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
 
 // ########################### UART SETIINGS ############################

@@ -730,7 +730,7 @@
  */
 #define CFG_TARGET_BANDWIDTH_HZ   1000.0f                 // [Hz] current-loop target bandwidth
 #define CFG_MOTOR_L_H             0.0002f  // [H] phase-to-neutral inductance (one phase)
-#define CFG_MOTOR_R_OHM           0.5f    // [Ohm] phase-to-neutral resistance (one phase)
+#define CFG_MOTOR_R_OHM           0.25f    // [Ohm] phase-to-neutral resistance (one phase)
 #else
 //Q axis control gains
 #define QP            0.3f                                  //[-] P gain

@@ -1006,7 +1006,7 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
   #define Vd_max_margin         880.0f
 #endif
 
-#define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM/2) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))
+#define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))
 #define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
 
 // ########################### UART SETIINGS ############################

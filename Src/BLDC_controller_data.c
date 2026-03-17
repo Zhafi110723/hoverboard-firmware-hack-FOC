@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'BLDC_controller'.
  *
- * Model version                  : 16.47
+ * Model version                  : 16.52
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Fri Mar 13 02:20:24 2026
+ * C/C++ source code generated on : Mon Mar 16 22:33:32 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-M
@@ -59,7 +59,7 @@ P rtP_Left = {
    *   '<S85>/Input'
    *   '<S90>/Input'
    */
-  2308,
+  1388,
 
   /* Variable: a_phaAdvMax
    * Referenced by: '<S58>/a_phaAdvMax'
@@ -125,20 +125,20 @@ P rtP_Left = {
    */
   12000,
 
-  /* Variable: cf_idKp
-   * Referenced by: '<S79>/cf_idKp2'
-   */
-  4096U,
-
-  /* Variable: cf_iqKp
-   * Referenced by: '<S78>/cf_iqKp1'
-   */
-  4096U,
-
   /* Variable: cf_nKp
    * Referenced by: '<S77>/cf_nKp'
    */
   4833U,
+
+  /* Variable: cf_idKp
+   * Referenced by: '<S79>/cf_idKp2'
+   */
+  429U,
+
+  /* Variable: cf_iqKp
+   * Referenced by: '<S78>/cf_iqKp1'
+   */
+  429U,
 
   /* Variable: cf_currFilt
    * Referenced by: '<S66>/cf_currFilt'
@@ -148,12 +148,12 @@ P rtP_Left = {
   /* Variable: cf_idKi
    * Referenced by: '<S79>/cf_idKi2'
    */
-  1229U,
+  268U,
 
   /* Variable: cf_iqKi
    * Referenced by: '<S78>/cf_iqKi1'
    */
-  1229U,
+  268U,
 
   /* Variable: cf_iqKiLimProt
    * Referenced by:

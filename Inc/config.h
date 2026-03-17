@@ -728,9 +728,9 @@
  * - Default: use manual QP/QI/DP/DI values.
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
-#define CFG_TARGET_BANDWIDTH_HZ   1200.0f                 // [Hz] current-loop target bandwidth
-#define CFG_MOTOR_L_H             0.0004f  // [H] phase-to-neutral inductance (one phase)
-#define CFG_MOTOR_R_OHM           0.3f    // [Ohm] phase-to-neutral resistance (one phase)
+#define CFG_TARGET_BANDWIDTH_HZ   1000.0f                 // [Hz] current-loop target bandwidth
+#define CFG_MOTOR_L_H             0.0002f  // [H] phase-to-neutral inductance (one phase)
+#define CFG_MOTOR_R_OHM           0.5f    // [Ohm] phase-to-neutral resistance (one phase)
 #else
 //Q axis control gains
 #define QP            0.3f                                  //[-] P gain
@@ -1006,7 +1006,7 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
   #define Vd_max_margin         880.0f
 #endif
 
-#define FF_GAIN_REAL                 ((((CFG_MOTOR_R_OHM / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))
+#define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM/2) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))
 #define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
 
 // ########################### UART SETIINGS ############################

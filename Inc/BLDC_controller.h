@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'BLDC_controller'.
  *
- * Model version                  : 16.47
+ * Model version                  : 16.52
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Fri Mar 13 02:20:24 2026
+ * C/C++ source code generated on : Mon Mar 16 22:33:32 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-M
@@ -432,14 +432,14 @@ struct P_ {
   int16_T r_fieldWeakLo;               /* Variable: r_fieldWeakLo
                                         * Referenced by: '<S58>/r_fieldWeakLo'
                                         */
+  uint16_T cf_nKp;                     /* Variable: cf_nKp
+                                        * Referenced by: '<S77>/cf_nKp'
+                                        */
   uint16_T cf_idKp;                    /* Variable: cf_idKp
                                         * Referenced by: '<S79>/cf_idKp2'
                                         */
   uint16_T cf_iqKp;                    /* Variable: cf_iqKp
                                         * Referenced by: '<S78>/cf_iqKp1'
-                                        */
-  uint16_T cf_nKp;                     /* Variable: cf_nKp
-                                        * Referenced by: '<S77>/cf_nKp'
                                         */
   uint16_T cf_currFilt;                /* Variable: cf_currFilt
                                         * Referenced by: '<S66>/cf_currFilt'

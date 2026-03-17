@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'BLDC_controller'.
  *
- * Model version                  : 16.47
+ * Model version                  : 16.52
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Fri Mar 13 02:20:24 2026
+ * C/C++ source code generated on : Mon Mar 16 22:33:32 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-M
@@ -1004,7 +1004,7 @@ int16_T PI_clamp_fixdtFF(int16_T rtu_err, uint16_T rtu_P, uint16_T rtu_I,
   rtb_Sum1_hj = tmp_1 + localDW->ResettableDelay_DSTATE;
 
   /* Product: '<S90>/Divide5' */
-  tmp_1 = (rtu_err * rtu_P) >> 11;
+  tmp_1 = (rtu_err * rtu_P) >> 12;
   if (tmp_1 > 32767) {
     tmp_1 = 32767;
   } else if (tmp_1 < -32768) {
@@ -1026,7 +1026,7 @@ int16_T PI_clamp_fixdtFF(int16_T rtu_err, uint16_T rtu_P, uint16_T rtu_I,
   /* Product: '<S90>/Product' incorporates:
    *  Constant: '<S90>/Input'
    */
-  tmp = (rtP->ff_gain * rtu_FeedForward) >> 10;
+  tmp = (rtP->ff_gain * rtu_FeedForward) >> 12;
   if (tmp > 32767) {
     tmp = 32767;
   } else if (tmp < -32768) {
@@ -1313,7 +1313,7 @@ int16_T PI_clamp_fixdtFF_c(int16_T rtu_err, uint16_T rtu_P, uint16_T rtu_I,
   rtb_Sum1_b = (int16_T)(tmp + localDW->ResettableDelay_DSTATE);
 
   /* Product: '<S85>/Divide5' */
-  tmp_1 = (rtu_err * rtu_P) >> 11;
+  tmp_1 = (rtu_err * rtu_P) >> 12;
   if (tmp_1 > 32767) {
     tmp_1 = 32767;
   } else if (tmp_1 < -32768) {
@@ -1334,7 +1334,7 @@ int16_T PI_clamp_fixdtFF_c(int16_T rtu_err, uint16_T rtu_P, uint16_T rtu_I,
   /* Product: '<S85>/Product' incorporates:
    *  Constant: '<S85>/Input'
    */
-  tmp_0 = (rtP->ff_gain * rtu_FeedForward) >> 10;
+  tmp_0 = (rtP->ff_gain * rtu_FeedForward) >> 12;
   if (tmp_0 > 32767) {
     tmp_0 = 32767;
   } else if (tmp_0 < -32768) {

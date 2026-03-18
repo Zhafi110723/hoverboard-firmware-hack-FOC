@@ -427,7 +427,7 @@ void calc_hw_pwm(void){
         duty_scaled = (duty_ticks * 65534u) / period_ticks;
         pwm_captured_ch2_value = (int16_t)duty_scaled - 32767; 
         #ifdef HSPWM 
-        #ifndef INVERT_R_DIRECTION            
+        #ifdef INVERT_R_DIRECTION            
         HS_PWM = pwm_captured_ch2_value;
         #else
         HS_PWM = -pwm_captured_ch2_value; 

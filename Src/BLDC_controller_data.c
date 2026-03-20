@@ -133,12 +133,12 @@ P rtP_Left = {
   /* Variable: cf_idKp
    * Referenced by: '<S79>/cf_idKp2'
    */
-  429U,
+  2458U,
 
   /* Variable: cf_iqKp
    * Referenced by: '<S78>/cf_iqKp1'
    */
-  429U,
+  2458U,
 
   /* Variable: cf_currFilt
    * Referenced by: '<S66>/cf_currFilt'

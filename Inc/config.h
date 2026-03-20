@@ -715,7 +715,7 @@
 //#define ENCODER_Y                 //enable Y encoder to left motor
 #define INTBRK_L_EN                 //enable brake resistor control on PHASE A left side driver, do not disable if break reistor is connected 
 //#define EXTBRK_EN                 // enable brake resistor control pin on left uart port, pick PA2 or PA3 below
-#define CFG_USE_BW_PI_CALC        // use automatic PI gain calculation based on bandwidth, L, R, and VBUS. Comment-out to use manual QP/QI/DP/DI values below.
+#define CFG_USE_BW_PI_CALC          // use automatic PI gain calculation based on bandwidth, L, R, and VBUS. Comment-out to use manual QP/QI/DP/DI values below.
 #ifdef EXTBRK_EN                         
 #define EXTBRK_USE_CH3              // PA2      
 //#define EXTBRK_USE_CH4            // PA3
@@ -729,8 +729,8 @@
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
 #define CFG_TARGET_BANDWIDTH_HZ   1000.0f                 // [Hz] current-loop target bandwidth
-#define CFG_MOTOR_L_H             0.0002f  // [H] phase-to-neutral inductance (one phase)
-#define CFG_MOTOR_R_OHM           0.25f    // [Ohm] phase-to-neutral resistance (one phase)
+#define CFG_MOTOR_L_H             0.002f  // [H] phase-to-neutral inductance (one phase)
+#define CFG_MOTOR_R_OHM           0.5f    // [Ohm] phase-to-neutral resistance (one phase)
 #else
 //Q axis control gains
 #define QP            0.3f                                  //[-] P gain
@@ -988,16 +988,10 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
 #define DaI              (float)(DI/(PWM_FREQ))      //Integrator scaling//
 
 /* Gain values pre-scaled for fixed-point model parameters (after variant overrides) */
-#define QP_FIXDT_12                  FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QP, 12))
-#define DP_FIXDT_12                  FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DP, 12))
-#define QaI_FIXDT_16                 FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QaI, 16))
-#define DaI_FIXDT_16                 FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DaI, 16))
-
-/* ===================== Finalize fixed-point gains after variant overrides ===================== */
-#define CFG_CF_IDKI                  DaI_FIXDT_16
-#define CFG_CF_IDKP                  DP_FIXDT_12
-#define CFG_CF_IQKI                  QaI_FIXDT_16
-#define CFG_CF_IQKP                  QP_FIXDT_12
+#define CFG_CF_IQKP                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QP, 13))
+#define CFG_CF_IDKP                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DP, 13))
+#define CFG_CF_IQKI                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QaI, 16))
+#define CFG_CF_IDKI                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DaI, 16))
 
 /* ===================== Setting up FeedForward Gain ===================== */
 #if defined(GD32F103Rx)

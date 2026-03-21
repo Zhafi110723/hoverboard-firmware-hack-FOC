@@ -728,8 +728,8 @@
  * - Default: use manual QP/QI/DP/DI values.
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
-#define CFG_TARGET_BANDWIDTH_HZ   1000.0f                 // [Hz] current-loop target bandwidth
-#define CFG_MOTOR_L_H             0.002f  // [H] phase-to-neutral inductance (one phase)
+#define CFG_TARGET_BANDWIDTH_HZ   200.0f                 // [Hz] current-loop target bandwidth
+#define CFG_MOTOR_L_H             0.004f  // [H] phase inductance 
 #define CFG_MOTOR_R_OHM           0.5f    // [Ohm] phase-to-neutral resistance (one phase)
 #else
 //Q axis control gains
@@ -923,6 +923,12 @@
 #define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
 #endif
 
+#if defined(GD32F103Rx)
+  #define Vd_max_margin         1627.0f
+#else
+  #define Vd_max_margin         880.0f
+#endif
+
 /* Ensure motor parameters exist even when CFG_USE_BW_PI_CALC is disabled */
 #ifndef CFG_MOTOR_R_OHM
   #define CFG_MOTOR_R_OHM          0.3f
@@ -966,8 +972,8 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
  *   QP   = 2*pi*Bandwidth*L / VBUS
  *   QI   = QP * R/L
  */
-  #define QP            ((CFG_PI_CONST_2PI * CFG_TARGET_BANDWIDTH_HZ * CFG_MOTOR_L_H) / CFG_VBUS_V) // [-] P gain
-  #define QI            (QP * (CFG_MOTOR_R_OHM / CFG_MOTOR_L_H))                                     // [-] I gain
+  #define QP            ((CFG_PI_CONST_2PI * CFG_TARGET_BANDWIDTH_HZ * CFG_MOTOR_L_H) * (Vd_max_margin/(CFG_VBUS_V*50))/2) // [-] P gain
+  #define QI            (QP * (CFG_MOTOR_R_OHM / CFG_MOTOR_L_H)/2)                                     // [-] I gain
   #define DP            QP                                                                             // [-] P gain
   #define DI            QI                                                                             // [-] I gain
   /* Current measurement low-pass filter coefficient: fixdt(0,16,16) */
@@ -994,12 +1000,6 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
 #define CFG_CF_IDKI                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DaI, 16))
 
 /* ===================== Setting up FeedForward Gain ===================== */
-#if defined(GD32F103Rx)
-  #define Vd_max_margin         1627.0f
-#else
-  #define Vd_max_margin         880.0f
-#endif
-
 #define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))
 #define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
 

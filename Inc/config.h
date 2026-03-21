@@ -729,7 +729,7 @@
  * - Optional: define CFG_USE_BW_PI_CALC to auto-compute gains from bandwidth, L, R, and VBUS.
  */
 #define CFG_TARGET_BANDWIDTH_HZ   200.0f                 // [Hz] current-loop target bandwidth
-#define CFG_MOTOR_L_H             0.004f  // [H] phase inductance 
+#define CFG_MOTOR_L_H             0.0004f  // [H] phase inductance 
 #define CFG_MOTOR_R_OHM           0.5f    // [Ohm] phase-to-neutral resistance (one phase)
 #else
 //Q axis control gains
@@ -972,8 +972,8 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
  *   QP   = 2*pi*Bandwidth*L / VBUS
  *   QI   = QP * R/L
  */
-  #define QP            ((CFG_PI_CONST_2PI * CFG_TARGET_BANDWIDTH_HZ * CFG_MOTOR_L_H) * (Vd_max_margin/(CFG_VBUS_V*50))/2) // [-] P gain
-  #define QI            (QP * (CFG_MOTOR_R_OHM / CFG_MOTOR_L_H)/2)                                     // [-] I gain
+  #define QP            ((CFG_PI_CONST_2PI * CFG_TARGET_BANDWIDTH_HZ * CFG_MOTOR_L_H) * (Vd_max_margin/(CFG_VBUS_V*50))) // [-] P gain
+  #define QI            (QP * (CFG_MOTOR_R_OHM / CFG_MOTOR_L_H))                                     // [-] I gain
   #define DP            QP                                                                             // [-] P gain
   #define DI            QI                                                                             // [-] I gain
   /* Current measurement low-pass filter coefficient: fixdt(0,16,16) */
@@ -994,14 +994,14 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
 #define DaI              (float)(DI/(PWM_FREQ))      //Integrator scaling//
 
 /* Gain values pre-scaled for fixed-point model parameters (after variant overrides) */
-#define CFG_CF_IQKP                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QP, 13))
-#define CFG_CF_IDKP                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DP, 13))
+#define CFG_CF_IQKP                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QP, 10))
+#define CFG_CF_IDKP                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DP, 10))
 #define CFG_CF_IQKI                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(QaI, 16))
 #define CFG_CF_IDKI                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DaI, 16))
 
-/* ===================== Setting up FeedForward Gain ===================== */
-#define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))
-#define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
+/* ===================== Setting up FeedForward Gain( not used anymore) ===================== */
+//#define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))   
+//#define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
 
 // ########################### UART SETIINGS ############################
 #if defined(FEEDBACK_SERIAL_USART2) || defined(CONTROL_SERIAL_USART2) || defined(DEBUG_SERIAL_USART2) || defined(SIDEBOARD_SERIAL_USART2) || \

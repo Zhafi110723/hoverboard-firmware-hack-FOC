@@ -234,7 +234,7 @@ def _patch_generated_rtP_plumbing(text: str) -> tuple[str, list[str]]:
     call_patterns: list[tuple[str, str, str]] = [
         (
             "updated F03_Control_Mode_Manager() call site(s) to forward rtP",
-            r"(&rtb_Saturation,\s*)(?:rtP,\s*)?(&rtDW->F03_Control_Mode_Manager_f\))",
+            r"(&(?:rtb|rtDW->)Saturation,\s*)(?:rtP,\s*)?(&rtDW->F03_Control_Mode_Manager_f\))",
             r"\1rtP, \2",
         ),
         (
@@ -249,7 +249,7 @@ def _patch_generated_rtP_plumbing(text: str) -> tuple[str, list[str]]:
         ),
         (
             "updated FOC() call site(s) to forward rtP",
-            r"(rtDW->UnitDelay4_DSTATE_a,\s*rtP->b_cruiseCtrlEna,\s*)(?:rtP,\s*)?(&rtDW->Merge,\s*&rtDW->Switch1,\s*&rtDW->FOC_h\))",
+            r"(rtDW->UnitDelay4_DSTATE_a,\s*rtP->b_cruiseCtrlEna,\s*)(?:rtP,\s*)?(&rtDW->Merge,\s*&rtDW->Switch2_b,\s*&rtDW->FOC_h\))",
             r"\1rtP, \2",
         ),
     ]

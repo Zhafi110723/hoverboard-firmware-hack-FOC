@@ -493,7 +493,7 @@ void BLDC_Init(void) {
   rtP_Left.a_cpr                = 0;
   rtP_Left.a_fcpr               = 0;
   #endif
-  rtP_Left.ff_gain              = FF_GAIN;
+  //rtP_Left.ff_gain              = FF_GAIN; //not used anymore
   
   rtP_Right                     = rtP_Left;     // Copy the Left motor parameters to the Right motor parameters
   rtP_Right.z_selPhaCurMeasABC  = 1;            // Right motor measured current phases {Green, Blue} = {iA, iB} -> do NOT change

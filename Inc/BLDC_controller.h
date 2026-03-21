@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'BLDC_controller'.
  *
- * Model version                  : 16.52
+ * Model version                  : 16.60
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Mon Mar 16 22:33:32 2026
+ * C/C++ source code generated on : Sat Mar 21 18:21:03 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-M
@@ -156,18 +156,11 @@ typedef struct {
   boolean_T UnitDelay_DSTATE_c;        /* '<S55>/UnitDelay' */
 } DW_F03_Control_Mode_Manager;
 
-/* Block signals and states (default storage) for system '<S100>/I_backCalc_fixdt' */
+/* Block signals and states (default storage) for system '<S206>/I_backCalc_fixdt' */
 typedef struct {
-  int32_T UnitDelay_DSTATE;            /* '<S161>/UnitDelay' */
-  int32_T UnitDelay_DSTATE_a;          /* '<S163>/UnitDelay' */
+  int32_T UnitDelay_DSTATE;            /* '<S267>/UnitDelay' */
+  int32_T UnitDelay_DSTATE_a;          /* '<S269>/UnitDelay' */
 } DW_I_backCalc_fixdt;
-
-/* Block signals and states (default storage) for system '<S79>/PI_clamp_fixdtFF' */
-typedef struct {
-  int32_T ResettableDelay_DSTATE;      /* '<S93>/Resettable Delay' */
-  boolean_T UnitDelay1_DSTATE;         /* '<S90>/UnitDelay1' */
-  boolean_T icLoad;                    /* '<S93>/Resettable Delay' */
-} DW_PI_clamp_fixdtFF;
 
 /* Block signals and states (default storage) for system '<S77>/PI_clamp_fixdt' */
 typedef struct {
@@ -176,35 +169,30 @@ typedef struct {
   boolean_T icLoad;                    /* '<S83>/Resettable Delay' */
 } DW_PI_clamp_fixdt;
 
-/* Block signals and states (default storage) for system '<S78>/PI_clamp_fixdtFF' */
-typedef struct {
-  int16_T ResettableDelay_DSTATE;      /* '<S88>/Resettable Delay' */
-  boolean_T UnitDelay1_DSTATE;         /* '<S85>/UnitDelay1' */
-  boolean_T icLoad;                    /* '<S88>/Resettable Delay' */
-} DW_PI_clamp_fixdtFF_k;
-
 /* Block signals and states (default storage) for system '<S7>/FOC' */
 typedef struct {
-  DW_PI_clamp_fixdtFF_k PI_clamp_fixdtFF_ci;/* '<S78>/PI_clamp_fixdtFF' */
   DW_PI_clamp_fixdt PI_clamp_fixdt_j;  /* '<S77>/PI_clamp_fixdt' */
-  DW_PI_clamp_fixdtFF PI_clamp_fixdtFF_a;/* '<S79>/PI_clamp_fixdtFF' */
+  int16_T constant2;                   /* '<S79>/constant2' */
+  int16_T Integrator_DSTATE;           /* '<S124>/Integrator' */
+  int16_T Integrator_DSTATE_f;         /* '<S182>/Integrator' */
   int8_T If1_ActiveSubsystem;          /* '<S63>/If1' */
   int8_T SwitchCase_ActiveSubsystem;   /* '<S75>/Switch Case' */
   int8_T If1_ActiveSubsystem_a;        /* '<S75>/If1' */
+  uint8_T Integrator_IC_LOADING;       /* '<S124>/Integrator' */
 } DW_FOC;
 
 /* Block signals and states (default storage) for system '<Root>' */
 typedef struct {
   DW_FOC FOC_h;                        /* '<S7>/FOC' */
-  DW_I_backCalc_fixdt I_backCalc_fixdt1;/* '<S100>/I_backCalc_fixdt1' */
-  DW_I_backCalc_fixdt I_backCalc_fixdt_c;/* '<S100>/I_backCalc_fixdt' */
+  DW_I_backCalc_fixdt I_backCalc_fixdt1;/* '<S206>/I_backCalc_fixdt1' */
+  DW_I_backCalc_fixdt I_backCalc_fixdt_c;/* '<S206>/I_backCalc_fixdt' */
   DW_F03_Control_Mode_Manager F03_Control_Mode_Manager_f;/* '<S1>/F03_Control_Mode_Manager' */
   DW_either_edge either_edge_j;        /* '<S33>/either_edge' */
   DW_Debounce_Filter Debounce_Filter_e;/* '<S33>/Debounce_Filter' */
   DW_Low_Pass_Filter Low_Pass_Filter_e;/* '<S66>/Low_Pass_Filter' */
   DW_Counter Counter_c;                /* '<S13>/Counter' */
   int64_T i;
-  int32_T Divide1;                     /* '<S97>/Divide1' */
+  int32_T Divide1;                     /* '<S203>/Divide1' */
   int32_T sigIdx;
   int32_T i1;
   int32_T i2;
@@ -213,18 +201,18 @@ typedef struct {
   int16_T DataTypeConversion[2];       /* '<S72>/Data Type Conversion' */
   int16_T TmpSignalConversionAtLow_Pa[2];
   int16_T Merge;                       /* '<S75>/Merge' */
-  int16_T Switch1;                     /* '<S94>/Switch1' */
-  int16_T Divide1_d;                   /* '<S96>/Divide1' */
-  int16_T Gain1;                       /* '<S96>/Gain1' */
-  int16_T Gain4;                       /* '<S96>/Gain4' */
+  int16_T Switch2_b;                   /* '<S190>/Switch2' */
+  int16_T Divide1_d;                   /* '<S202>/Divide1' */
+  int16_T Gain1;                       /* '<S202>/Gain1' */
+  int16_T Gain4;                       /* '<S202>/Gain4' */
   int16_T OutportBufferForid_max;
   int16_T VariantMergeForOutportVd_max;
   int16_T VariantMergeForOutportVd_min;
   int16_T VariantMergeForOutportVq_max;
   int16_T VariantMergeForOutportVq_min;
-  int16_T Switch2_m;                   /* '<S146>/Switch2' */
-  int16_T Switch2_p;                   /* '<S166>/Switch2' */
-  int16_T Switch2_b;                   /* '<S164>/Switch2' */
+  int16_T Switch2_m;                   /* '<S252>/Switch2' */
+  int16_T Switch2_p;                   /* '<S272>/Switch2' */
+  int16_T Switch2_bd;                  /* '<S270>/Switch2' */
   int16_T OutportBufferForr_fieldWeak;
   int16_T Divide3;                     /* '<S58>/Divide3' */
   int16_T Merge1;                      /* '<S46>/Merge1' */
@@ -243,20 +231,23 @@ typedef struct {
   int16_T UnitDelay5_DSTATE;           /* '<S17>/UnitDelay5' */
   int16_T UnitDelay4_DSTATE_f;         /* '<S13>/UnitDelay4' */
   int16_T UnitDelay4_DSTATE_a;         /* '<S8>/UnitDelay4' */
-  int16_T Integrator_DSTATE;           /* '<S138>/Integrator' */
+  int16_T Integrator_DSTATE;           /* '<S244>/Integrator' */
+  int16_T Switch3;                     /* '<S17>/Switch3' */
+  int16_T Saturation;                  /* '<S1>/Saturation' */
+  int16_T Saturation1;                 /* '<S1>/Saturation1' */
   int8_T Switch2_a;                    /* '<S12>/Switch2' */
   int8_T UnitDelay2_DSTATE_o;          /* '<S12>/UnitDelay2' */
   int8_T If1_ActiveSubsystem;          /* '<S7>/If1' */
   int8_T If2_ActiveSubsystem;          /* '<S7>/If2' */
   int8_T If1_ActiveSubsystem_b;        /* '<S64>/If1' */
-  int8_T SwitchCase_ActiveSubsystem;   /* '<S96>/Switch Case' */
+  int8_T SwitchCase_ActiveSubsystem;   /* '<S202>/Switch Case' */
   int8_T If2_ActiveSubsystem_a;        /* '<S61>/If2' */
   uint8_T z_ctrlMod;                   /* '<S5>/F03_02_Control_Mode_Manager' */
-  uint8_T Switch1_n;                   /* '<S33>/Switch1' */
+  uint8_T Switch1;                     /* '<S33>/Switch1' */
   uint8_T UnitDelay3_DSTATE_f;         /* '<S10>/UnitDelay3' */
   uint8_T UnitDelay1_DSTATE;           /* '<S10>/UnitDelay1' */
   uint8_T UnitDelay2_DSTATE_k;         /* '<S10>/UnitDelay2' */
-  uint8_T Integrator_IC_LOADING;       /* '<S138>/Integrator' */
+  uint8_T Integrator_IC_LOADING;       /* '<S244>/Integrator' */
   boolean_T OutportBufferForb_errFlag;
   boolean_T Merge_a;                   /* '<S34>/Merge' */
   boolean_T dz_cntTrnsDet;             /* '<S17>/dz_cntTrnsDet' */
@@ -281,24 +272,24 @@ typedef struct {
   int16_T r_cos_M1_1_Table[181];
 
   /* Computed Parameter: r_sin3PhaA_M1_Table
-   * Referenced by: '<S169>/r_sin3PhaA_M1'
+   * Referenced by: '<S275>/r_sin3PhaA_M1'
    */
   int16_T r_sin3PhaA_M1_Table[181];
 
   /* Computed Parameter: r_sin3PhaB_M1_Table
-   * Referenced by: '<S169>/r_sin3PhaB_M1'
+   * Referenced by: '<S275>/r_sin3PhaB_M1'
    */
   int16_T r_sin3PhaB_M1_Table[181];
 
   /* Computed Parameter: r_sin3PhaC_M1_Table
-   * Referenced by: '<S169>/r_sin3PhaC_M1'
+   * Referenced by: '<S275>/r_sin3PhaC_M1'
    */
   int16_T r_sin3PhaC_M1_Table[181];
 
 #if mcu_model == 1
 
   /* Computed Parameter: GD32_Vq_max_M1_Table
-   * Referenced by: '<S159>/GD32_Vq_max_M1'
+   * Referenced by: '<S265>/GD32_Vq_max_M1'
    */
   int16_T GD32_Vq_max_M1_Table[82];
 
@@ -310,7 +301,7 @@ typedef struct {
 #if mcu_model == 0
 
   /* Computed Parameter: STM32_Vq_max_M1_Table
-   * Referenced by: '<S160>/STM32_Vq_max_M1'
+   * Referenced by: '<S266>/STM32_Vq_max_M1'
    */
   int16_T STM32_Vq_max_M1_Table[32];
 
@@ -320,12 +311,12 @@ typedef struct {
 #endif
 
   /* Computed Parameter: iq_maxSca_M1_Table
-   * Referenced by: '<S96>/iq_maxSca_M1'
+   * Referenced by: '<S202>/iq_maxSca_M1'
    */
   uint16_T iq_maxSca_M1_Table[100];
 
   /* Computed Parameter: z_commutMap_M1_table
-   * Referenced by: '<S167>/z_commutMap_M1'
+   * Referenced by: '<S273>/z_commutMap_M1'
    */
   int8_T z_commutMap_M1_table[18];
 
@@ -387,18 +378,13 @@ struct P_ {
                                         *   '<S13>/UnitDelay3'
                                         *   '<S17>/z_counter'
                                         */
-  int16_T ff_gain;                     /* Variable: ff_gain
-                                        * Referenced by:
-                                        *   '<S85>/Input'
-                                        *   '<S90>/Input'
-                                        */
   int16_T a_phaAdvMax;                 /* Variable: a_phaAdvMax
                                         * Referenced by: '<S58>/a_phaAdvMax'
                                         */
   int16_T i_max;                       /* Variable: i_max
                                         * Referenced by:
                                         *   '<S49>/i_max'
-                                        *   '<S96>/i_max'
+                                        *   '<S202>/i_max'
                                         */
   int16_T id_fieldWeakMax;             /* Variable: id_fieldWeakMax
                                         * Referenced by: '<S58>/id_fieldWeakMax'
@@ -418,7 +404,7 @@ struct P_ {
   int16_T n_max;                       /* Variable: n_max
                                         * Referenced by:
                                         *   '<S49>/n_max'
-                                        *   '<S96>/n_max'
+                                        *   '<S202>/n_max'
                                         */
   int16_T n_stdStillDet;               /* Variable: n_stdStillDet
                                         * Referenced by: '<S13>/n_stdStillDet'
@@ -432,14 +418,14 @@ struct P_ {
   int16_T r_fieldWeakLo;               /* Variable: r_fieldWeakLo
                                         * Referenced by: '<S58>/r_fieldWeakLo'
                                         */
-  uint16_T cf_nKp;                     /* Variable: cf_nKp
-                                        * Referenced by: '<S77>/cf_nKp'
-                                        */
   uint16_T cf_idKp;                    /* Variable: cf_idKp
                                         * Referenced by: '<S79>/cf_idKp2'
                                         */
   uint16_T cf_iqKp;                    /* Variable: cf_iqKp
                                         * Referenced by: '<S78>/cf_iqKp1'
+                                        */
+  uint16_T cf_nKp;                     /* Variable: cf_nKp
+                                        * Referenced by: '<S77>/cf_nKp'
                                         */
   uint16_T cf_currFilt;                /* Variable: cf_currFilt
                                         * Referenced by: '<S66>/cf_currFilt'
@@ -452,16 +438,16 @@ struct P_ {
                                         */
   uint16_T cf_iqKiLimProt;             /* Variable: cf_iqKiLimProt
                                         * Referenced by:
-                                        *   '<S97>/cf_iqKiLimProt'
-                                        *   '<S100>/cf_iqKiLimProt'
+                                        *   '<S203>/cf_iqKiLimProt'
+                                        *   '<S206>/cf_iqKiLimProt'
                                         */
   uint16_T cf_nKi;                     /* Variable: cf_nKi
                                         * Referenced by: '<S77>/cf_nKi'
                                         */
   uint16_T cf_nKiLimProt;              /* Variable: cf_nKiLimProt
                                         * Referenced by:
-                                        *   '<S98>/cf_nKiLimProt'
-                                        *   '<S100>/cf_nKiLimProt'
+                                        *   '<S204>/cf_nKiLimProt'
+                                        *   '<S206>/cf_nKiLimProt'
                                         */
   uint16_T a_cpr;                      /* Variable: a_cpr
                                         * Referenced by: '<S15>/Constant'
@@ -492,7 +478,7 @@ struct P_ {
   boolean_T b_fieldWeakEna;            /* Variable: b_fieldWeakEna
                                         * Referenced by:
                                         *   '<S6>/b_fieldWeakEna'
-                                        *   '<S170>/b_fieldWeakEna'
+                                        *   '<S276>/b_fieldWeakEna'
                                         */
   uint8_T z_ctrlTypSel;                /* Variable: z_ctrlTypSel
                                         * Referenced by: '<S1>/z_ctrlTypSel'
@@ -528,8 +514,8 @@ extern const ConstP rtConstP;
  */
 extern uint16_T cf_KbLimProt;          /* Variable: cf_KbLimProt
                                         * Referenced by:
-                                        *   '<S100>/cf_KbLimProt'
-                                        *   '<S130>/Kb'
+                                        *   '<S206>/cf_KbLimProt'
+                                        *   '<S236>/Kb'
                                         */
 
 /* Model entry point functions */
@@ -545,7 +531,6 @@ extern void BLDC_controller_step(RT_MODEL *const rtM);
  * Block '<S22>/Data Type Duplicate' : Unused code path elimination
  * Block '<S57>/Data Type Duplicate' : Unused code path elimination
  * Block '<S57>/Data Type Propagation' : Unused code path elimination
- * Block '<S6>/FieldWeakening' : Unused code path elimination
  * Block '<S59>/Data Type Duplicate' : Unused code path elimination
  * Block '<S59>/Data Type Propagation' : Unused code path elimination
  * Block '<S60>/Data Type Duplicate' : Unused code path elimination
@@ -554,31 +539,30 @@ extern void BLDC_controller_step(RT_MODEL *const rtM);
  * Block '<S61>/Scope' : Unused code path elimination
  * Block '<S62>/Scope' : Unused code path elimination
  * Block '<S78>/FOC TQ PI' : Unused code path elimination
+ * Block '<S132>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S132>/Data Type Propagation' : Unused code path elimination
  * Block '<S86>/Data Type Duplicate' : Unused code path elimination
  * Block '<S86>/Data Type Propagation' : Unused code path elimination
- * Block '<S79>/FOC VD' : Unused code path elimination
- * Block '<S91>/Data Type Duplicate' : Unused code path elimination
- * Block '<S91>/Data Type Propagation' : Unused code path elimination
- * Block '<S95>/Data Type Duplicate' : Unused code path elimination
- * Block '<S95>/Data Type Propagation' : Unused code path elimination
+ * Block '<S190>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S190>/Data Type Propagation' : Unused code path elimination
+ * Block '<S144>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S144>/Data Type Propagation' : Unused code path elimination
+ * Block '<S201>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S201>/Data Type Propagation' : Unused code path elimination
  * Block '<S63>/Scope' : Unused code path elimination
- * Block '<S96>/Scope' : Unused code path elimination
- * Block '<S101>/Data Type Duplicate' : Unused code path elimination
- * Block '<S101>/Data Type Propagation' : Unused code path elimination
- * Block '<S146>/Data Type Duplicate' : Unused code path elimination
- * Block '<S146>/Data Type Propagation' : Unused code path elimination
- * Block '<S164>/Data Type Duplicate' : Unused code path elimination
- * Block '<S164>/Data Type Propagation' : Unused code path elimination
- * Block '<S166>/Data Type Duplicate' : Unused code path elimination
- * Block '<S166>/Data Type Propagation' : Unused code path elimination
- * Block '<S7>/Scope8' : Unused code path elimination
- * Block '<S7>/iqid' : Unused code path elimination
- * Block '<S7>/toNegative' : Unused code path elimination
- * Block '<S170>/Scope' : Unused code path elimination
+ * Block '<S202>/Scope' : Unused code path elimination
+ * Block '<S207>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S207>/Data Type Propagation' : Unused code path elimination
+ * Block '<S252>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S252>/Data Type Propagation' : Unused code path elimination
+ * Block '<S270>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S270>/Data Type Propagation' : Unused code path elimination
+ * Block '<S272>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S272>/Data Type Propagation' : Unused code path elimination
+ * Block '<S276>/Scope' : Unused code path elimination
  * Block '<S2>/Data Type Conversion' : Eliminate redundant data type conversion
  * Block '<S22>/Data Type Conversion' : Eliminate redundant data type conversion
  * Block '<S31>/Data Type Conversion' : Eliminate redundant data type conversion
- * Block '<S88>/Data Type Conversion1' : Eliminate redundant data type conversion
  * Block '<S78>/Signal Conversion2' : Eliminate redundant signal conversion block
  * Block '<S22>/Constant' : Unused code path elimination
  * Block '<S22>/Constant1' : Unused code path elimination
@@ -686,93 +670,199 @@ extern void BLDC_controller_step(RT_MODEL *const rtM);
  * '<S82>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Speed_Mode/PI_clamp_fixdt/Clamping_circuit'
  * '<S83>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Speed_Mode/PI_clamp_fixdt/Integrator'
  * '<S84>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Speed_Mode/PI_clamp_fixdt/Saturation_hit'
- * '<S85>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI_clamp_fixdtFF'
+ * '<S85>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller'
  * '<S86>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/Saturation Dynamic1'
- * '<S87>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI_clamp_fixdtFF/Clamping_circuit'
- * '<S88>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI_clamp_fixdtFF/Integrator'
- * '<S89>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI_clamp_fixdtFF/Saturation_hit'
- * '<S90>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI_clamp_fixdtFF'
- * '<S91>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/Saturation Dynamic'
- * '<S92>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI_clamp_fixdtFF/Clamping_circuit'
- * '<S93>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI_clamp_fixdtFF/Integrator'
- * '<S94>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI_clamp_fixdtFF/Saturation_hit'
- * '<S95>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Voltage_Mode/Saturation Dynamic1'
- * '<S96>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled'
- * '<S97>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Speed_Mode_Protection'
- * '<S98>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection'
- * '<S99>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Variant Subsystem'
- * '<S100>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection'
- * '<S101>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Speed_Mode_Protection/Saturation Dynamic'
- * '<S102>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller'
- * '<S103>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/Variant Subsystem1'
- * '<S104>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Anti-windup'
- * '<S105>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/D Gain'
- * '<S106>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/External Derivative'
- * '<S107>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter'
- * '<S108>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter ICs'
- * '<S109>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/I Gain'
- * '<S110>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain'
- * '<S111>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain Fdbk'
- * '<S112>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator'
- * '<S113>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator ICs'
- * '<S114>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Copy'
- * '<S115>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Gain'
- * '<S116>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/P Copy'
- * '<S117>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Parallel P Gain'
- * '<S118>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Reset Signal'
- * '<S119>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation'
- * '<S120>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation Fdbk'
- * '<S121>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum'
- * '<S122>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum Fdbk'
- * '<S123>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode'
- * '<S124>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode Sum'
- * '<S125>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Integral'
- * '<S126>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Ngain'
- * '<S127>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/postSat Signal'
- * '<S128>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preInt Signal'
- * '<S129>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preSat Signal'
- * '<S130>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Anti-windup/Back Calculation'
- * '<S131>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/D Gain/Disabled'
- * '<S132>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/External Derivative/Disabled'
- * '<S133>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter/Disabled'
- * '<S134>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter ICs/Disabled'
- * '<S135>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/I Gain/External Parameters'
- * '<S136>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain/Passthrough'
- * '<S137>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain Fdbk/Disabled'
- * '<S138>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator/Discrete'
- * '<S139>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator ICs/External IC'
- * '<S140>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Copy/Disabled wSignal Specification'
- * '<S141>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Gain/Disabled'
- * '<S142>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/P Copy/Disabled'
- * '<S143>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Parallel P Gain/Disabled'
- * '<S144>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Reset Signal/Disabled'
- * '<S145>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation/External'
- * '<S146>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation/External/Saturation Dynamic'
- * '<S147>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation Fdbk/Disabled'
- * '<S148>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum/Passthrough_I'
- * '<S149>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum Fdbk/Disabled'
- * '<S150>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode/Disabled'
- * '<S151>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode Sum/Passthrough'
- * '<S152>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Integral/Passthrough'
- * '<S153>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Ngain/Passthrough'
- * '<S154>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/postSat Signal/Forward_Path'
- * '<S155>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preInt Signal/Internal PreInt'
- * '<S156>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preSat Signal/Forward_Path'
- * '<S157>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/Variant Subsystem1/GD32F103'
- * '<S158>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/Variant Subsystem1/STM32F103'
- * '<S159>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Variant Subsystem/GD32F103'
- * '<S160>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Variant Subsystem/STM32F103'
- * '<S161>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt'
- * '<S162>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt1'
- * '<S163>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt/Integrator'
- * '<S164>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt/Saturation Dynamic1'
- * '<S165>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt1/Integrator'
- * '<S166>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt1/Saturation Dynamic1'
- * '<S167>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/COM_Method'
- * '<S168>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/FOC_Method'
- * '<S169>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/SIN_Method'
- * '<S170>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/SIN_Method/Final_Phase_Advance_Calculation'
- * '<S171>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/SIN_Method/Final_Phase_Advance_Calculation/Modulo_fixdt'
+ * '<S87>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Anti-windup'
+ * '<S88>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/D Gain'
+ * '<S89>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/External Derivative'
+ * '<S90>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Filter'
+ * '<S91>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Filter ICs'
+ * '<S92>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/I Gain'
+ * '<S93>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Ideal P Gain'
+ * '<S94>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Ideal P Gain Fdbk'
+ * '<S95>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Integrator'
+ * '<S96>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Integrator ICs'
+ * '<S97>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/N Copy'
+ * '<S98>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/N Gain'
+ * '<S99>'  : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/P Copy'
+ * '<S100>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Parallel P Gain'
+ * '<S101>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Reset Signal'
+ * '<S102>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Saturation'
+ * '<S103>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Saturation Fdbk'
+ * '<S104>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Sum'
+ * '<S105>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Sum Fdbk'
+ * '<S106>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tracking Mode'
+ * '<S107>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tracking Mode Sum'
+ * '<S108>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tsamp - Integral'
+ * '<S109>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tsamp - Ngain'
+ * '<S110>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/postSat Signal'
+ * '<S111>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/preInt Signal'
+ * '<S112>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/preSat Signal'
+ * '<S113>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Anti-windup/Disc. Clamping Parallel'
+ * '<S114>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Anti-windup/Disc. Clamping Parallel/Dead Zone'
+ * '<S115>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Anti-windup/Disc. Clamping Parallel/Dead Zone/External'
+ * '<S116>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Anti-windup/Disc. Clamping Parallel/Dead Zone/External/Dead Zone Dynamic'
+ * '<S117>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/D Gain/Disabled'
+ * '<S118>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/External Derivative/Disabled'
+ * '<S119>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Filter/Disabled'
+ * '<S120>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Filter ICs/Disabled'
+ * '<S121>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/I Gain/External Parameters'
+ * '<S122>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Ideal P Gain/Passthrough'
+ * '<S123>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Ideal P Gain Fdbk/Disabled'
+ * '<S124>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Integrator/Discrete'
+ * '<S125>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Integrator ICs/External IC'
+ * '<S126>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/N Copy/Disabled wSignal Specification'
+ * '<S127>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/N Gain/Disabled'
+ * '<S128>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/P Copy/Disabled'
+ * '<S129>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Parallel P Gain/External Parameters'
+ * '<S130>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Reset Signal/Disabled'
+ * '<S131>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Saturation/External'
+ * '<S132>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Saturation/External/Saturation Dynamic'
+ * '<S133>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Saturation Fdbk/Disabled'
+ * '<S134>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Sum/Sum_PI'
+ * '<S135>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Sum Fdbk/Disabled'
+ * '<S136>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tracking Mode/Disabled'
+ * '<S137>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tracking Mode Sum/Passthrough'
+ * '<S138>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tsamp - Integral/Passthrough'
+ * '<S139>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/Tsamp - Ngain/Passthrough'
+ * '<S140>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/postSat Signal/Forward_Path'
+ * '<S141>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/preInt Signal/Internal PreInt'
+ * '<S142>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Torque_Mode/PI Controller/preSat Signal/Forward_Path'
+ * '<S143>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller'
+ * '<S144>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/Saturation Dynamic'
+ * '<S145>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Anti-windup'
+ * '<S146>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/D Gain'
+ * '<S147>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/External Derivative'
+ * '<S148>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Filter'
+ * '<S149>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Filter ICs'
+ * '<S150>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/I Gain'
+ * '<S151>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Ideal P Gain'
+ * '<S152>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Ideal P Gain Fdbk'
+ * '<S153>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Integrator'
+ * '<S154>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Integrator ICs'
+ * '<S155>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/N Copy'
+ * '<S156>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/N Gain'
+ * '<S157>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/P Copy'
+ * '<S158>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Parallel P Gain'
+ * '<S159>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Reset Signal'
+ * '<S160>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Saturation'
+ * '<S161>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Saturation Fdbk'
+ * '<S162>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Sum'
+ * '<S163>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Sum Fdbk'
+ * '<S164>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tracking Mode'
+ * '<S165>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tracking Mode Sum'
+ * '<S166>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tsamp - Integral'
+ * '<S167>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tsamp - Ngain'
+ * '<S168>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/postSat Signal'
+ * '<S169>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/preInt Signal'
+ * '<S170>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/preSat Signal'
+ * '<S171>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Anti-windup/Disc. Clamping Parallel'
+ * '<S172>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Anti-windup/Disc. Clamping Parallel/Dead Zone'
+ * '<S173>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Anti-windup/Disc. Clamping Parallel/Dead Zone/External'
+ * '<S174>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Anti-windup/Disc. Clamping Parallel/Dead Zone/External/Dead Zone Dynamic'
+ * '<S175>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/D Gain/Disabled'
+ * '<S176>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/External Derivative/Disabled'
+ * '<S177>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Filter/Disabled'
+ * '<S178>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Filter ICs/Disabled'
+ * '<S179>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/I Gain/External Parameters'
+ * '<S180>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Ideal P Gain/Passthrough'
+ * '<S181>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Ideal P Gain Fdbk/Disabled'
+ * '<S182>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Integrator/Discrete'
+ * '<S183>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Integrator ICs/External IC'
+ * '<S184>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/N Copy/Disabled wSignal Specification'
+ * '<S185>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/N Gain/Disabled'
+ * '<S186>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/P Copy/Disabled'
+ * '<S187>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Parallel P Gain/External Parameters'
+ * '<S188>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Reset Signal/Disabled'
+ * '<S189>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Saturation/External'
+ * '<S190>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Saturation/External/Saturation Dynamic'
+ * '<S191>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Saturation Fdbk/Disabled'
+ * '<S192>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Sum/Sum_PI'
+ * '<S193>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Sum Fdbk/Disabled'
+ * '<S194>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tracking Mode/Disabled'
+ * '<S195>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tracking Mode Sum/Passthrough'
+ * '<S196>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tsamp - Integral/Passthrough'
+ * '<S197>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/Tsamp - Ngain/Passthrough'
+ * '<S198>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/postSat Signal/Forward_Path'
+ * '<S199>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/preInt Signal/Internal PreInt'
+ * '<S200>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Vd_Calculation/PI Controller/preSat Signal/Forward_Path'
+ * '<S201>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/FOC/FOC_Enabled/Voltage_Mode/Saturation Dynamic1'
+ * '<S202>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled'
+ * '<S203>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Speed_Mode_Protection'
+ * '<S204>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection'
+ * '<S205>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Variant Subsystem'
+ * '<S206>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection'
+ * '<S207>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Speed_Mode_Protection/Saturation Dynamic'
+ * '<S208>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller'
+ * '<S209>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/Variant Subsystem1'
+ * '<S210>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Anti-windup'
+ * '<S211>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/D Gain'
+ * '<S212>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/External Derivative'
+ * '<S213>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter'
+ * '<S214>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter ICs'
+ * '<S215>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/I Gain'
+ * '<S216>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain'
+ * '<S217>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain Fdbk'
+ * '<S218>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator'
+ * '<S219>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator ICs'
+ * '<S220>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Copy'
+ * '<S221>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Gain'
+ * '<S222>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/P Copy'
+ * '<S223>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Parallel P Gain'
+ * '<S224>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Reset Signal'
+ * '<S225>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation'
+ * '<S226>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation Fdbk'
+ * '<S227>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum'
+ * '<S228>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum Fdbk'
+ * '<S229>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode'
+ * '<S230>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode Sum'
+ * '<S231>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Integral'
+ * '<S232>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Ngain'
+ * '<S233>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/postSat Signal'
+ * '<S234>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preInt Signal'
+ * '<S235>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preSat Signal'
+ * '<S236>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Anti-windup/Back Calculation'
+ * '<S237>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/D Gain/Disabled'
+ * '<S238>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/External Derivative/Disabled'
+ * '<S239>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter/Disabled'
+ * '<S240>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Filter ICs/Disabled'
+ * '<S241>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/I Gain/External Parameters'
+ * '<S242>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain/Passthrough'
+ * '<S243>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Ideal P Gain Fdbk/Disabled'
+ * '<S244>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator/Discrete'
+ * '<S245>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Integrator ICs/External IC'
+ * '<S246>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Copy/Disabled wSignal Specification'
+ * '<S247>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/N Gain/Disabled'
+ * '<S248>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/P Copy/Disabled'
+ * '<S249>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Parallel P Gain/Disabled'
+ * '<S250>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Reset Signal/Disabled'
+ * '<S251>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation/External'
+ * '<S252>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation/External/Saturation Dynamic'
+ * '<S253>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Saturation Fdbk/Disabled'
+ * '<S254>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum/Passthrough_I'
+ * '<S255>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Sum Fdbk/Disabled'
+ * '<S256>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode/Disabled'
+ * '<S257>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tracking Mode Sum/Passthrough'
+ * '<S258>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Integral/Passthrough'
+ * '<S259>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/Tsamp - Ngain/Passthrough'
+ * '<S260>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/postSat Signal/Forward_Path'
+ * '<S261>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preInt Signal/Internal PreInt'
+ * '<S262>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/PI Controller/preSat Signal/Forward_Path'
+ * '<S263>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/Variant Subsystem1/GD32F103'
+ * '<S264>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Torque_Mode_Protection/Variant Subsystem1/STM32F103'
+ * '<S265>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Variant Subsystem/GD32F103'
+ * '<S266>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Variant Subsystem/STM32F103'
+ * '<S267>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt'
+ * '<S268>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt1'
+ * '<S269>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt/Integrator'
+ * '<S270>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt/Saturation Dynamic1'
+ * '<S271>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt1/Integrator'
+ * '<S272>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F05_Field_Oriented_Control/Motor_Limitations/Motor_Limitations_Enabled/Voltage_Mode_Protection/I_backCalc_fixdt1/Saturation Dynamic1'
+ * '<S273>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/COM_Method'
+ * '<S274>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/FOC_Method'
+ * '<S275>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/SIN_Method'
+ * '<S276>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/SIN_Method/Final_Phase_Advance_Calculation'
+ * '<S277>' : 'BLDCmotor_FOC_R2017b_fixdt/BLDC_controller/F06_Control_Type_Management/SIN_Method/Final_Phase_Advance_Calculation/Modulo_fixdt'
  */
 #endif                                 /* BLDC_controller_h_ */
 

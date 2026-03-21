@@ -920,7 +920,7 @@
 #endif
 /* ===================== Finalize PI gains after all variant overrides ===================== */
 #ifndef CFG_VBUS_V
-#define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.2f)
+#define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.0f)
 #endif
 
 #if defined(GD32F103Rx)

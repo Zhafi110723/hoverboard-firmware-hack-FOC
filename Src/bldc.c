@@ -139,13 +139,13 @@ void DMA1_Channel1_IRQHandler(void) {
 
     offsetcount++;
     if (offsetcount == CURRENT_SENSE_OFFSET_CAL_SAMPLES) {
-      // Final exact-average ADC offsets; +3 keeps measured DC-link current centered on this hardware.
+      // Final exact-average ADC offsets; +2 keeps measured DC-link current centered on this hardware.
       offsetrlA = (int16_t)(offsetSumRlA / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
       offsetrlB = (int16_t)(offsetSumRlB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
       offsetrrB = (int16_t)(offsetSumRrB / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
       offsetrrC = (int16_t)(offsetSumRrC / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES);
-      offsetdcl = (int16_t)(offsetSumDcl / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
-      offsetdcr = (int16_t)(offsetSumDcr / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 3;
+      offsetdcl = (int16_t)(offsetSumDcl / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 2;
+      offsetdcr = (int16_t)(offsetSumDcr / (int32_t)CURRENT_SENSE_OFFSET_CAL_SAMPLES) + 2;
     }
   #else
     offsetcount++;

@@ -716,13 +716,14 @@
 #define INTBRK_L_EN                 //enable brake resistor control on PHASE A left side driver, do not disable if break reistor is connected 
 //#define EXTBRK_EN                 // enable brake resistor control pin on left uart port, pick PA2 or PA3 below
 #define CFG_USE_BW_PI_CALC          // use automatic PI gain calculation based on bandwidth, L, R, and VBUS. Comment-out to use manual QP/QI/DP/DI values below.
+//#define FeedForward                 // Experimental, this adds a component to the control output that is proportional to the input command, this can help improve response.
 #ifdef EXTBRK_EN                         
 #define EXTBRK_USE_CH3              // PA2      
 //#define EXTBRK_USE_CH4            // PA3
 #endif
 
 #define BAT_CELLS               6      // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
-#if defined(CFG_USE_BW_PI_CALC)
+#ifdef CFG_USE_BW_PI_CALC
 /*
  * D/Q current-loop PI tuning
  * - Default: use manual QP/QI/DP/DI values.
@@ -753,12 +754,12 @@
 
 #endif  
 #define  ENCODER_IC_FILTER       6
-#if defined ENCODER_X
+#ifdef ENCODER_X
 #define ENCODER_CPR              65535                 //Enter your ENCODER CPR here
 #define ENCODER_X_PPR            (ENCODER_CPR+1)/4     // Pulses per revolution
 #define ALIGNMENT_X_POWER        3276      // [-] Voltage used for sensor alignment. [-16000, 16000]
 #endif
-#if defined ENCODER_Y
+#ifdef ENCODER_Y
 #define ENCODER_CPR              65535                //Enter your ENCODER CPR here
 #define ENCODER_Y_PPR            (ENCODER_CPR+1)/4    // Pulses per revolution 
 #define ALIGNMENT_Y_POWER        3276        // [-] Voltage used for sensor alignment. [-16000, 16000]
@@ -857,7 +858,7 @@
 #endif
 
 #define BAT_CELLS               6       // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
-#if defined(CFG_USE_BW_PI_CALC)
+#ifdef CFG_USE_BW_PI_CALC
 /*
  * D/Q current-loop PI tuning
  * - Default: use manual QP/QI/DP/DI values.
@@ -923,7 +924,7 @@
 #define CFG_VBUS_V                ((float)(BAT_CELLS) * 4.0f)
 #endif
 
-#if defined(GD32F103Rx)
+#ifdef GD32F103Rx
   #define Vd_max_margin         1627.0f
 #else
   #define Vd_max_margin         880.0f
@@ -937,7 +938,7 @@
   #define CFG_MOTOR_L_H            0.0004f
 #endif
 
-#if defined(CFG_USE_BW_PI_CALC)
+#ifdef CFG_USE_BW_PI_CALC
 #define CFG_CURR_FILT_TARGET_MULT  3U  // [-] EXACT target REAL multiplier for current filter cutoff frequency. Recommended: 3+.
 #define CFG_TARGET_BANDWIDTH_HZ_INT ((int)(CFG_TARGET_BANDWIDTH_HZ + 0.5f)) // [Hz] integer mirror derived from bandwidth
 #define CFG_PI_CONST_2PI          6.28318530717958647692f
@@ -1000,8 +1001,14 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
 #define CFG_CF_IDKI                    FIXDT_CLAMP_U16(FIXDT_FROM_FLOAT(DaI, 16))
 
 /* ===================== Setting up FeedForward Gain( not used anymore) ===================== */
-//#define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))   
-//#define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 10))
+#ifdef FeedForward
+#define FeedForwardEnable     1
+#define FF_GAIN_REAL                 (((((CFG_MOTOR_R_OHM) / (float)A2BIT_CONV) * ((Vd_max_margin * 2.0f) / CFG_VBUS_V))))/4   
+#define FF_GAIN                      FIXDT_CLAMP_S16(FIXDT_FROM_FLOAT(FF_GAIN_REAL, 12))
+#else
+#define FeedForwardEnable     0  
+#endif
+
 
 // ########################### UART SETIINGS ############################
 #if defined(FEEDBACK_SERIAL_USART2) || defined(CONTROL_SERIAL_USART2) || defined(DEBUG_SERIAL_USART2) || defined(SIDEBOARD_SERIAL_USART2) || \
@@ -1045,7 +1052,7 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
   #define INPUTS_NR               1
 #endif
 
-#if defined(DC_LINK_WATCHDOG_ENABLE)
+#ifdef DC_LINK_WATCHDOG_ENABLE
   #define DC_LINK_OVERVOLTAGE_HIGH_X100   (BAT_CALIB_REAL_VOLTAGE + 300)  // e.g. +5 V
   //#define DC_LINK_OVERVOLTAGE_LOW_X100    (BAT_CALIB_REAL_VOLTAGE + 100U)  // e.g. +1 V
 
@@ -1068,7 +1075,7 @@ _Static_assert((CFG_CURR_FILT_TARGET_MULT * CFG_TARGET_BANDWIDTH_HZ_INT) < (PWM_
  //   #error "DC_LINK_OVERVOLTAGE_LOW_X100 must map below the overvoltage high threshold"
  // #endif
 #endif
-#if defined(ANALOG_BUTTON)
+#ifdef ANALOG_BUTTON
   #define POWER_BUTTON_ADC_FULL_SCALE        4096U   // 12-bit ADC
   #define POWER_BUTTON_ADC_REFERENCE_MV      3300U   // ADC reference voltage in millivolts
   #define POWER_BUTTON_DIVIDER_RATIO_X100    1800U   // Resistor divider scaling (e.g. 18.0 => 33V -> 1.83V)

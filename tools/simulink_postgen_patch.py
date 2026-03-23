@@ -249,7 +249,7 @@ def _patch_generated_rtP_plumbing(text: str) -> tuple[str, list[str]]:
         ),
         (
             "updated FOC() call site(s) to forward rtP",
-            r"(rtDW->UnitDelay4_DSTATE_a,\s*rtP->b_cruiseCtrlEna,\s*)(?:rtP,\s*)?(&rtDW->Merge,\s*&rtDW->Switch2_b,\s*&rtDW->FOC_h\))",
+            r"(rtDW->UnitDelay4_DSTATE_a,\s*rtP->b_cruiseCtrlEna,\s*)(?:rtP,\s*)?(&rtDW->Merge,\s*&rtDW->[A-Za-z0-9_]+,\s*&rtDW->FOC_h\))",
             r"\1rtP, \2",
         ),
     ]
@@ -259,6 +259,33 @@ def _patch_generated_rtP_plumbing(text: str) -> tuple[str, list[str]]:
         if count:
             text = new_text
             details.append(f"{detail} ({count})")
+
+    missing_rtP_calls: list[str] = []
+
+    def _is_call_site(match_start: int) -> bool:
+        prefix = text[max(0, match_start - 80):match_start]
+        return re.search(r"(?:extern\s+)?void\s+$", prefix) is None
+
+    for match in re.finditer(r"F03_Control_Mode_Manager\([\s\S]*?\);", text):
+        if not _is_call_site(match.start()):
+            continue
+        block = match.group(0)
+        if ", rtP," not in block:
+            missing_rtP_calls.append(block)
+
+    for match in re.finditer(r"FOC\([\s\S]*?\);", text):
+        if not _is_call_site(match.start()):
+            continue
+        block = match.group(0)
+        if ", rtP," not in block:
+            missing_rtP_calls.append(block)
+
+    if missing_rtP_calls:
+        preview = "\n\n".join(missing_rtP_calls[:3])
+        raise RuntimeError(
+            "Detected call sites missing rtP forwarding. Update the patcher.\n"
+            f"Examples (first 3):\n{preview}"
+        )
 
     return text, details
 

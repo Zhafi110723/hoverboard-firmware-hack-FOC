@@ -22,7 +22,7 @@
   //#define VARIANT_TRANSPOTTER // Variant for TRANSPOTTER build https://github.com/NiklasFauth/hoverboard-firmware-hack/wiki/Build-Instruction:-TranspOtter https://hackaday.io/project/161891-transpotter-ng
   //#define VARIANT_SKATEBOARD  // Variant for SKATEBOARD build
   //#define VARIANT_ENCODER      // Variant for control via ENCODER
-  #define ONE_AXIS_VARIANT      // One-axis FFB wheel setup (non-PlatformIO builds)
+  #define ONE_AXIS_VARIANT      // One-axis FFB wheel setup (non-PlatformIO builds) test1
 #endif
 
 

@@ -22,7 +22,7 @@
   //#define VARIANT_TRANSPOTTER // Variant for TRANSPOTTER build https://github.com/NiklasFauth/hoverboard-firmware-hack/wiki/Build-Instruction:-TranspOtter https://hackaday.io/project/161891-transpotter-ng
   //#define VARIANT_SKATEBOARD  // Variant for SKATEBOARD build
   //#define VARIANT_ENCODER      // Variant for control via ENCODER
-#define ONE_AXIS_VARIANT      // One-axis FFB wheel setup (non-PlatformIO builds)
+  #define ONE_AXIS_VARIANT      // One-axis FFB wheel setup (non-PlatformIO builds)
 #endif
 
 
@@ -713,7 +713,7 @@
 ////////////////////////////////////////
 //#define ESTOP_REQUIRE_HOLD           // Require the button to stay pressed for the estop to remain active
 #define ESTOP_ENABLE                //ESTOP functionality enabled
-#define GD32F103Rx                  // define if you are using a GD32F103Rx MCU to set system clock to 108MHz  
+//#define GD32F103Rx                  // define if you are using a GD32F103Rx MCU to set system clock to 108MHz  
 #define HOCP                        // Tie PA6/PB12 hardware over-current signals into TIM1/TIM8 break inputs
 #define BEEPER_OFF                  //use led as beeper
 #define ENCODER_X                   //enable X encoder to right motor
@@ -727,7 +727,7 @@
 //#define EXTBRK_USE_CH4            // PA3
 #endif
 
-#define BAT_CELLS               6      // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
+#define BAT_CELLS               10      // battery number of cells. Normal Hoverboard battery: 10s = 36V nominal, 42V full charge. For 36V battery use 10, for 24V use 6, for 48V use 13 etc.
 #ifdef CFG_USE_BW_PI_CALC
 /*
  * D/Q current-loop PI tuning
@@ -760,7 +760,7 @@
 #endif  
 #define  ENCODER_IC_FILTER       6
 #ifdef ENCODER_X
-#define ENCODER_CPR              65535                 //Enter your ENCODER CPR here
+#define ENCODER_CPR              4800                 //Enter your ENCODER CPR here
 #define ENCODER_X_PPR            (ENCODER_CPR+1)/4     // Pulses per revolution
 #define ALIGNMENT_X_POWER        3276      // [-] Voltage used for sensor alignment. [-16000, 16000]
 #endif
@@ -784,8 +784,8 @@
 #define CURRENT_SENSE_OFFSET_DCL_TRIM  0        // [ADC counts] ONE_AXIS left DC-link offset trim
 #define CURRENT_SENSE_OFFSET_DCR_TRIM  0        // [ADC counts] ONE_AXIS right DC-link offset trim
 // Limitation settings
-#define I_MOT_MAX                10              // [A] Maximum single motor current limit
-#define I_DC_MAX                 13              // [A] Maximum stage2 DC Link current limit (Above this value, current chopping is applied. To avoid this make sure that I_DC_MAX = I_MOT_MAX + 2A)
+#define I_MOT_MAX                7              // [A] Maximum single motor current limit
+#define I_DC_MAX                 9             // [A] Maximum stage2 DC Link current limit (Above this value, current chopping is applied. To avoid this make sure that I_DC_MAX = I_MOT_MAX + 2A)
 #define N_MOT_MAX                1900            // [rpm] Maximum motor speed limit
 
 
